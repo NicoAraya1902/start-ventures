@@ -2,7 +2,7 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, Rocket } from 'lucide-react';
+import { Menu, University } from 'lucide-react';
 
 const Header = () => {
   const navLinks = [
@@ -16,7 +16,7 @@ const Header = () => {
       <div className="container flex h-14 items-center">
         <div className="mr-4 flex items-center">
           <Link to="/" className="flex items-center space-x-2">
-            <Rocket className="h-6 w-6 text-primary" />
+            <University className="h-6 w-6 text-primary" />
             <span className="font-bold">START</span>
           </Link>
         </div>

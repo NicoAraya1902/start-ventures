@@ -10,7 +10,7 @@ const Explore = () => {
     <div className="container py-8">
       <div className="text-center">
         <h1 className="text-4xl font-bold tracking-tight lg:text-5xl">Explorar Proyectos</h1>
-        <p className="mt-4 text-lg text-muted-foreground">Encuentra tu próximo proyecto apasionante o la pieza final para tu equipo.</p>
+        <p className="mt-4 text-lg text-muted-foreground">Explora las ideas que están naciendo en tu universidad y otros campus. Encuentra un proyecto que te apasione y aporta tu talento.</p>
       </div>
 
       <div className="my-8 flex flex-col md:flex-row gap-4">

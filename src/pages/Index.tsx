@@ -10,10 +10,10 @@ const Index = () => {
         {/* Hero Section */}
         <section className="container pt-24 pb-12 text-center">
           <h1 className="text-4xl font-extrabold tracking-tight lg:text-6xl">
-            De la Idea al Impacto, Juntos.
+            Del Campus al Ecosistema Emprendedor.
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
-            START es donde creadores, emprendedores y profesionales se conectan. Publica tu proyecto, encuentra colaboradores y haz realidad tu visión.
+            START es la plataforma para estudiantes con grandes ideas. Conecta con compañeros, forma equipos y transforma tus proyectos académicos en startups innovadoras.
           </p>
           <div className="mt-8 flex justify-center gap-4">
             <Button asChild size="lg">
@@ -35,21 +35,21 @@ const Index = () => {
                 <Lightbulb className="h-8 w-8" />
               </div>
               <h3 className="text-xl font-bold">Publica una Idea</h3>
-              <p className="text-muted-foreground">¿Tienes un concepto brillante? Comparte tu visión y describe los roles que necesitas cubrir.</p>
+              <p className="text-muted-foreground">¿Tienes un proyecto para una asignatura, un TFG o una idea innovadora? Compártela y busca el talento que necesitas en el campus.</p>
             </div>
             <div className="text-center">
               <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary">
                 <Users className="h-8 w-8" />
               </div>
               <h3 className="text-xl font-bold">Encuentra Talento</h3>
-              <p className="text-muted-foreground">Descubre y conecta con desarrolladores, diseñadores, especialistas en marketing y profesionales de negocios deseosos de aportar sus habilidades.</p>
+              <p className="text-muted-foreground">Conecta con estudiantes de programación, diseño y negocios. Tu próximo co-fundador podría estar en la facultad de al lado.</p>
             </div>
             <div className="text-center">
               <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary">
                 <CheckCircle className="h-8 w-8" />
               </div>
               <h3 className="text-xl font-bold">Construye tu Equipo</h3>
-              <p className="text-muted-foreground">Reúne a tu equipo ideal, gestiona las solicitudes y comienza a colaborar para hacer realidad tu idea.</p>
+              <p className="text-muted-foreground">Forma tu equipo ideal, gestiona candidaturas y empieza a colaborar para llevar tu proyecto al siguiente nivel, incluso antes de graduarte.</p>
             </div>
           </div>
         </section>
