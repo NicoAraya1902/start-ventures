@@ -54,4 +54,16 @@ export const projects: Project[] = [
       { roleId: 'r3-2', roleTitle: 'Pixel Artist', roleDescription: 'Create characters, environments, and assets.', requiredSkills: ['Pixel Art', 'Aseprite', 'Animation'], status: 'Open' },
     ],
   },
+  {
+    projectId: 'p4',
+    projectName: 'Aura Sustainable Fashion',
+    projectDescription: 'A direct-to-consumer fashion brand focused on creating high-quality, timeless apparel from sustainable materials. We are looking for partners to help build our brand identity, manage our supply chain, and launch our first collection.',
+    projectStage: 'Idea / Conceptualization',
+    technologies: ['Branding', 'E-commerce', 'Social Media Marketing', 'Supply Chain'],
+    projectImageUrl: 'https://images.unsplash.com/photo-1523359364024-5d88351b5b85?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80',
+    roles: [
+      { roleId: 'r4-1', roleTitle: 'Brand & Marketing Lead', roleDescription: 'Develop the brand strategy and lead marketing efforts for our launch.', requiredSkills: ['Branding', 'Digital Marketing', 'Content Creation'], status: 'Open' },
+      { roleId: 'r4-2', roleTitle: 'Operations & Supply Chain Manager', roleDescription: 'Source sustainable materials and manage the production process.', requiredSkills: ['Supply Chain Management', 'Vendor Relations', 'Sustainability'], status: 'Open' },
+    ],
+  },
 ];

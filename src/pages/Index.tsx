@@ -1,4 +1,3 @@
-
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Lightbulb, Users, CheckCircle } from 'lucide-react';
@@ -13,7 +12,7 @@ const Index = () => {
             From Idea to Impact, Together.
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
-            CollabCore is where innovators find collaborators. Post your project, discover skilled professionals, and build the future.
+            CollabCore is where creators, entrepreneurs, and professionals connect. Post your project, find collaborators, and bring your vision to life.
           </p>
           <div className="mt-8 flex justify-center gap-4">
             <Button asChild size="lg">
@@ -42,7 +41,7 @@ const Index = () => {
                 <Users className="h-8 w-8" />
               </div>
               <h3 className="text-xl font-bold">Find Talent</h3>
-              <p className="text-muted-foreground">Discover and connect with developers, designers, and creatives eager to join a project.</p>
+              <p className="text-muted-foreground">Discover and connect with developers, designers, marketers, and business professionals eager to contribute their skills.</p>
             </div>
             <div className="text-center">
               <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary">
