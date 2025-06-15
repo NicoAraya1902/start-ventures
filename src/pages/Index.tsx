@@ -1,3 +1,4 @@
+
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Lightbulb, Users, CheckCircle } from 'lucide-react';
@@ -12,7 +13,7 @@ const Index = () => {
             De la Idea al Impacto, Juntos.
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
-            CollabCore es donde creadores, emprendedores y profesionales se conectan. Publica tu proyecto, encuentra colaboradores y haz realidad tu visión.
+            START es donde creadores, emprendedores y profesionales se conectan. Publica tu proyecto, encuentra colaboradores y haz realidad tu visión.
           </p>
           <div className="mt-8 flex justify-center gap-4">
             <Button asChild size="lg">
