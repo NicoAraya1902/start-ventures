@@ -1,4 +1,3 @@
-
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Lightbulb, Users, CheckCircle } from 'lucide-react';
@@ -22,7 +21,7 @@ const Index = () => {
               </Link>
             </Button>
             <Button asChild size="lg" variant="outline">
-              <Link to="#">Publica Tu Idea</Link>
+              <Link to="/create-project">Publica Tu Idea</Link>
             </Button>
           </div>
         </section>
