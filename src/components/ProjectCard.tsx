@@ -27,7 +27,7 @@ const ProjectCard = ({ project }: { project: Project }) => {
       <CardFooter>
         <Button asChild className="w-full">
           <Link to={`/project/${project.projectId}`}>
-            View Project
+            Ver Proyecto
             <ArrowRight className="ml-2 h-4 w-4" />
           </Link>
         </Button>

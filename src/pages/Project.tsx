@@ -18,8 +18,8 @@ const ProjectPage = () => {
   
   const handleApplyClick = () => {
     toast({
-      title: "Authentication Required",
-      description: "Please sign up or log in to apply for this role.",
+      title: "Autenticación Requerida",
+      description: "Por favor, regístrate o inicia sesión para aplicar a este rol.",
       variant: "default",
     })
   }
@@ -28,7 +28,7 @@ const ProjectPage = () => {
     <div className="container py-12">
       <div className="mx-auto max-w-4xl">
         <div className="mb-8">
-          <Link to="/explore" className="text-sm text-primary hover:underline mb-4 block">&larr; Back to Projects</Link>
+          <Link to="/explore" className="text-sm text-primary hover:underline mb-4 block">&larr; Volver a Proyectos</Link>
           <div className="aspect-[16/9] w-full overflow-hidden rounded-xl mb-6">
             <img src={project.projectImageUrl} alt={project.projectName} className="w-full h-full object-cover" />
           </div>
@@ -40,7 +40,7 @@ const ProjectPage = () => {
           <div className="md:col-span-2">
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2"><Lightbulb /> About the Project</CardTitle>
+                <CardTitle className="flex items-center gap-2"><Lightbulb /> Sobre el Proyecto</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground">{project.projectDescription}</p>
@@ -49,10 +49,10 @@ const ProjectPage = () => {
 
             <Card className="mt-8">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2"><Briefcase /> Open Roles</CardTitle>
+                <CardTitle className="flex items-center gap-2"><Briefcase /> Roles Abiertos</CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
-                {project.roles.filter(r => r.status === 'Open').map(role => (
+                {project.roles.filter(r => r.status === 'Abierto').map(role => (
                   <div key={role.roleId} className="p-4 border rounded-lg">
                     <h3 className="font-semibold text-lg">{role.roleTitle}</h3>
                     <p className="text-sm text-muted-foreground mt-1 mb-3">{role.roleDescription}</p>
@@ -60,7 +60,7 @@ const ProjectPage = () => {
                       {role.requiredSkills.map(skill => <Badge key={skill} variant="outline">{skill}</Badge>)}
                     </div>
                     <Button onClick={handleApplyClick}>
-                      <Plus className="mr-2 h-4 w-4" /> Apply Now
+                      <Plus className="mr-2 h-4 w-4" /> Aplicar Ahora
                     </Button>
                   </div>
                 ))}
@@ -71,7 +71,7 @@ const ProjectPage = () => {
           <div>
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2"><Code /> Technologies</CardTitle>
+                <CardTitle className="flex items-center gap-2"><Code /> Tecnologías</CardTitle>
               </CardHeader>
               <CardContent className="flex flex-wrap gap-2">
                 {project.technologies.map(tech => (

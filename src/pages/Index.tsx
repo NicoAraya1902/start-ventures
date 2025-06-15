@@ -1,3 +1,4 @@
+
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Lightbulb, Users, CheckCircle } from 'lucide-react';
@@ -9,19 +10,19 @@ const Index = () => {
         {/* Hero Section */}
         <section className="container pt-24 pb-12 text-center">
           <h1 className="text-4xl font-extrabold tracking-tight lg:text-6xl">
-            From Idea to Impact, Together.
+            De la Idea al Impacto, Juntos.
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
-            CollabCore is where creators, entrepreneurs, and professionals connect. Post your project, find collaborators, and bring your vision to life.
+            CollabCore es donde creadores, emprendedores y profesionales se conectan. Publica tu proyecto, encuentra colaboradores y haz realidad tu visión.
           </p>
           <div className="mt-8 flex justify-center gap-4">
             <Button asChild size="lg">
               <Link to="/explore">
-                Explore Projects <ArrowRight className="ml-2 h-5 w-5" />
+                Explorar Proyectos <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </Button>
             <Button asChild size="lg" variant="outline">
-              <Link to="#">Post Your Idea</Link>
+              <Link to="#">Publica Tu Idea</Link>
             </Button>
           </div>
         </section>
@@ -33,22 +34,22 @@ const Index = () => {
               <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary">
                 <Lightbulb className="h-8 w-8" />
               </div>
-              <h3 className="text-xl font-bold">Post an Idea</h3>
-              <p className="text-muted-foreground">Have a brilliant concept? Share your vision and outline the roles you need to fill.</p>
+              <h3 className="text-xl font-bold">Publica una Idea</h3>
+              <p className="text-muted-foreground">¿Tienes un concepto brillante? Comparte tu visión y describe los roles que necesitas cubrir.</p>
             </div>
             <div className="text-center">
               <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary">
                 <Users className="h-8 w-8" />
               </div>
-              <h3 className="text-xl font-bold">Find Talent</h3>
-              <p className="text-muted-foreground">Discover and connect with developers, designers, marketers, and business professionals eager to contribute their skills.</p>
+              <h3 className="text-xl font-bold">Encuentra Talento</h3>
+              <p className="text-muted-foreground">Descubre y conecta con desarrolladores, diseñadores, especialistas en marketing y profesionales de negocios deseosos de aportar sus habilidades.</p>
             </div>
             <div className="text-center">
               <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary">
                 <CheckCircle className="h-8 w-8" />
               </div>
-              <h3 className="text-xl font-bold">Build Your Team</h3>
-              <p className="text-muted-foreground">Assemble your dream team, manage applications, and start collaborating to bring your idea to life.</p>
+              <h3 className="text-xl font-bold">Construye tu Equipo</h3>
+              <p className="text-muted-foreground">Reúne a tu equipo ideal, gestiona las solicitudes y comienza a colaborar para hacer realidad tu idea.</p>
             </div>
           </div>
         </section>

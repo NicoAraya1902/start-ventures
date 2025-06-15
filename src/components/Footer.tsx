@@ -9,10 +9,10 @@ const Footer = () => {
         <div className="flex flex-col items-center gap-4 px-8 md:flex-row md:gap-2 md:px-0">
           <Briefcase className="h-6 w-6 text-primary" />
           <p className="text-center text-sm leading-loose md:text-left">
-            Built by your friends at Lovable.
+            Creado por tus amigos de Lovable.
           </p>
         </div>
-        <p className="text-center text-sm text-muted-foreground">© {new Date().getFullYear()} CollabCore, Inc. All rights reserved.</p>
+        <p className="text-center text-sm text-muted-foreground">© {new Date().getFullYear()} CollabCore, Inc. Todos los derechos reservados.</p>
       </div>
     </footer>
   );

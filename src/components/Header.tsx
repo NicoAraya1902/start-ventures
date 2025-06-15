@@ -6,9 +6,9 @@ import { Menu, Briefcase } from 'lucide-react';
 
 const Header = () => {
   const navLinks = [
-    { name: 'Explore Projects', href: '/explore' },
-    { name: 'How it Works', href: '/#how-it-works' },
-    { name: 'About', href: '/#about' },
+    { name: 'Explorar Proyectos', href: '/explore' },
+    { name: 'Cómo Funciona', href: '/#how-it-works' },
+    { name: 'Acerca de', href: '/#about' },
   ];
 
   return (
@@ -29,10 +29,10 @@ const Header = () => {
         </nav>
         <div className="flex flex-1 items-center justify-end space-x-2">
           <Button variant="ghost" asChild>
-            <Link to="#">Log In</Link>
+            <Link to="#">Iniciar Sesión</Link>
           </Button>
           <Button asChild>
-            <Link to="#">Sign Up</Link>
+            <Link to="#">Registrarse</Link>
           </Button>
           <Sheet>
             <SheetTrigger asChild>
