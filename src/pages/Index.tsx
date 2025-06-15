@@ -90,7 +90,7 @@ const Index = () => {
                 </div>
                 <h3 className="text-xl font-bold">Trayectoria</h3>
                 <p className="text-sm text-muted-foreground">
-                  Fundado en 2025, START nació de la necesidad de un puente entre el talento universitario y el ecosistema emprendedor.
+                  Fundado en 2025, START nace de la necesidad de generar una red de emprendedores universitarios y ser un puente entre el talento del campus y el ecosistema de startups.
                 </p>
               </div>
             </div>
