@@ -7,6 +7,7 @@ import { Menu, University } from 'lucide-react';
 const Header = () => {
   const navLinks = [
     { name: 'Explorar Proyectos', href: '/explore' },
+    { name: 'Noticias', href: '/news' },
     { name: 'Cómo Funciona', href: '/#how-it-works' },
     { name: 'Acerca de', href: '/#about' },
   ];
@@ -58,3 +59,4 @@ const Header = () => {
 };
 
 export default Header;
+

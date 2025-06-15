@@ -11,6 +11,7 @@ import NotFound from "./pages/NotFound";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import CreateProjectPage from "./pages/CreateProject";
+import News from "./pages/News";
 
 const queryClient = new QueryClient();
 
@@ -36,6 +37,7 @@ const App = () => (
           <Route path="/" element={<Layout />}>
             <Route index element={<Index />} />
             <Route path="explore" element={<Explore />} />
+            <Route path="news" element={<News />} />
             <Route path="create-project" element={<CreateProjectPage />} />
             <Route path="project/:id" element={<ProjectPage />} />
             <Route path="*" element={<NotFound />} />
@@ -47,3 +49,4 @@ const App = () => (
 );
 
 export default App;
+
