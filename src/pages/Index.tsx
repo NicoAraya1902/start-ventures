@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Input } from "@/components/ui/input";
-import { Search, Filter, Users as UsersIcon, GraduationCap } from 'lucide-react';
+import { Search, Filter, Users as UsersIcon, GraduationCap, MapPin } from 'lucide-react';
 import {
   Select,
   SelectContent,
@@ -16,10 +16,12 @@ const Index = () => {
   const [selectedUniversity, setSelectedUniversity] = useState('all');
   const [selectedYear, setSelectedYear] = useState('all');
   const [selectedSkill, setSelectedSkill] = useState('all');
+  const [selectedRegion, setSelectedRegion] = useState('all');
 
   const universities = ['all', ...Array.from(new Set(students.map(s => s.university)))];
   const years = ['all', ...Array.from(new Set(students.map(s => s.year.toString())))];
   const skills = ['all', ...Array.from(new Set(students.flatMap(s => s.skills)))];
+  const regions = ['all', ...Array.from(new Set(students.map(s => s.region)))];
 
   const filteredStudents = students.filter(student => {
     const searchContent = `${student.name} ${student.description} ${student.skills.join(' ')} ${student.interests.join(' ')}`.toLowerCase();
@@ -27,8 +29,9 @@ const Index = () => {
     const matchesUniversity = selectedUniversity === 'all' || student.university === selectedUniversity;
     const matchesYear = selectedYear === 'all' || student.year.toString() === selectedYear;
     const matchesSkill = selectedSkill === 'all' || student.skills.includes(selectedSkill);
+    const matchesRegion = selectedRegion === 'all' || student.region === selectedRegion;
     
-    return matchesSearch && matchesUniversity && matchesYear && matchesSkill;
+    return matchesSearch && matchesUniversity && matchesYear && matchesSkill && matchesRegion;
   });
 
   return (
@@ -40,13 +43,13 @@ const Index = () => {
             Matchmaking de Emprendedores Universitarios
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
-            Conecta con estudiantes talentosos de toda España. Encuentra tu co-fundador ideal y forma el equipo perfecto para tu próxima startup.
+            Conecta con estudiantes talentosos de todo Chile. Encuentra tu co-fundador ideal y forma el equipo perfecto para tu próxima startup.
           </p>
         </section>
 
         {/* Filters Section */}
         <section className="container pb-8">
-          <div className="flex flex-col md:flex-row gap-4 mb-8">
+          <div className="flex flex-col lg:flex-row gap-4 mb-8">
             <div className="relative flex-grow">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
               <Input 
@@ -56,8 +59,22 @@ const Index = () => {
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
+            <Select onValueChange={setSelectedRegion} defaultValue="all">
+              <SelectTrigger className="w-full lg:w-[200px]">
+                <MapPin className="mr-2 h-4 w-4" />
+                <SelectValue placeholder="Región" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todas las regiones</SelectItem>
+                {regions.filter(r => r !== 'all').map(region => (
+                  <SelectItem key={region} value={region}>
+                    {region}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
             <Select onValueChange={setSelectedUniversity} defaultValue="all">
-              <SelectTrigger className="w-full md:w-[280px]">
+              <SelectTrigger className="w-full lg:w-[280px]">
                 <GraduationCap className="mr-2 h-4 w-4" />
                 <SelectValue placeholder="Universidad" />
               </SelectTrigger>
@@ -71,7 +88,7 @@ const Index = () => {
               </SelectContent>
             </Select>
             <Select onValueChange={setSelectedYear} defaultValue="all">
-              <SelectTrigger className="w-full md:w-[150px]">
+              <SelectTrigger className="w-full lg:w-[150px]">
                 <SelectValue placeholder="Año" />
               </SelectTrigger>
               <SelectContent>
@@ -84,7 +101,7 @@ const Index = () => {
               </SelectContent>
             </Select>
             <Select onValueChange={setSelectedSkill} defaultValue="all">
-              <SelectTrigger className="w-full md:w-[200px]">
+              <SelectTrigger className="w-full lg:w-[200px]">
                 <Filter className="mr-2 h-4 w-4" />
                 <SelectValue placeholder="Habilidad" />
               </SelectTrigger>
