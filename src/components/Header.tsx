@@ -6,8 +6,7 @@ import { Menu, University } from 'lucide-react';
 
 const Header = () => {
   const navLinks = [
-    { name: 'Explorar Proyectos', href: '/explore' },
-    { name: 'Noticias', href: '/news' },
+    { name: 'Estudiantes', href: '/' },
     { name: 'Cómo Funciona', href: '/#how-it-works' },
     { name: 'Acerca de', href: '/#about' },
   ];
@@ -18,7 +17,7 @@ const Header = () => {
         <div className="mr-4 flex items-center">
           <Link to="/" className="flex items-center space-x-2">
             <University className="h-6 w-6 text-primary" />
-            <span className="font-bold">START</span>
+            <span className="font-bold">START Matchmaking</span>
           </Link>
         </div>
         <nav className="hidden items-center space-x-6 text-sm font-medium md:flex">
@@ -33,7 +32,7 @@ const Header = () => {
             <Link to="#">Iniciar Sesión</Link>
           </Button>
           <Button asChild>
-            <Link to="#">Registrarse</Link>
+            <Link to="#">Únete al Mural</Link>
           </Button>
           <Sheet>
             <SheetTrigger asChild>

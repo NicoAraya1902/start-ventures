@@ -1,100 +1,125 @@
-import { Button } from '@/components/ui/button';
-import { Link } from 'react-router-dom';
-import { ArrowRight, Lightbulb, Users, CheckCircle, Rocket, Award, Flag } from 'lucide-react';
+import { useState } from 'react';
+import { Input } from "@/components/ui/input";
+import { Search, Filter, Users as UsersIcon, GraduationCap } from 'lucide-react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import StudentCard from '@/components/StudentCard';
+import { students } from '@/data/students-data';
 
 const Index = () => {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedUniversity, setSelectedUniversity] = useState('all');
+  const [selectedYear, setSelectedYear] = useState('all');
+  const [selectedSkill, setSelectedSkill] = useState('all');
+
+  const universities = ['all', ...Array.from(new Set(students.map(s => s.university)))];
+  const years = ['all', ...Array.from(new Set(students.map(s => s.year.toString())))];
+  const skills = ['all', ...Array.from(new Set(students.flatMap(s => s.skills)))];
+
+  const filteredStudents = students.filter(student => {
+    const searchContent = `${student.name} ${student.description} ${student.skills.join(' ')} ${student.interests.join(' ')}`.toLowerCase();
+    const matchesSearch = searchContent.includes(searchTerm.toLowerCase());
+    const matchesUniversity = selectedUniversity === 'all' || student.university === selectedUniversity;
+    const matchesYear = selectedYear === 'all' || student.year.toString() === selectedYear;
+    const matchesSkill = selectedSkill === 'all' || student.skills.includes(selectedSkill);
+    
+    return matchesSearch && matchesUniversity && matchesYear && matchesSkill;
+  });
+
   return (
     <div className="flex flex-col min-h-screen">
       <main className="flex-1">
         {/* Hero Section */}
         <section className="container pt-24 pb-12 text-center">
           <h1 className="text-4xl font-extrabold tracking-tight lg:text-6xl">
-            Del Campus al Ecosistema Emprendedor.
+            Matchmaking de Emprendedores Universitarios
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
-            START es la plataforma para estudiantes con grandes ideas. Conecta con compañeros, forma equipos y transforma tus proyectos académicos en startups innovadoras.
+            Conecta con estudiantes talentosos de toda España. Encuentra tu co-fundador ideal y forma el equipo perfecto para tu próxima startup.
           </p>
-          <div className="mt-8 flex justify-center gap-4">
-            <Button asChild size="lg">
-              <Link to="/explore">
-                Explorar Proyectos <ArrowRight className="ml-2 h-5 w-5" />
-              </Link>
-            </Button>
-            <Button asChild size="lg" variant="outline">
-              <Link to="/create-project">Publica Tu Idea</Link>
-            </Button>
-          </div>
         </section>
 
-        {/* Features Section */}
-        <section id="how-it-works" className="container py-24">
-          <div className="mx-auto grid max-w-4xl items-start gap-10 md:grid-cols-3">
-            <div className="text-center">
-              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary">
-                <Lightbulb className="h-8 w-8" />
-              </div>
-              <h3 className="text-xl font-bold">Publica una Idea</h3>
-              <p className="text-muted-foreground">¿Tienes un proyecto para una asignatura, un TFG o una idea innovadora? Compártela y busca el talento que necesitas en el campus.</p>
+        {/* Filters Section */}
+        <section className="container pb-8">
+          <div className="flex flex-col md:flex-row gap-4 mb-8">
+            <div className="relative flex-grow">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+              <Input 
+                placeholder="Buscar por nombre, habilidades, intereses..." 
+                className="pl-10"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
             </div>
-            <div className="text-center">
-              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary">
-                <Users className="h-8 w-8" />
-              </div>
-              <h3 className="text-xl font-bold">Encuentra Talento</h3>
-              <p className="text-muted-foreground">Conecta con estudiantes de programación, diseño y negocios. Tu próximo co-fundador podría estar en la facultad de al lado.</p>
-            </div>
-            <div className="text-center">
-              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary">
-                <CheckCircle className="h-8 w-8" />
-              </div>
-              <h3 className="text-xl font-bold">Construye tu Equipo</h3>
-              <p className="text-muted-foreground">Forma tu equipo ideal, gestiona candidaturas y empieza a colaborar para llevar tu proyecto al siguiente nivel, incluso antes de graduarte.</p>
-            </div>
+            <Select onValueChange={setSelectedUniversity} defaultValue="all">
+              <SelectTrigger className="w-full md:w-[280px]">
+                <GraduationCap className="mr-2 h-4 w-4" />
+                <SelectValue placeholder="Universidad" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todas las universidades</SelectItem>
+                {universities.filter(u => u !== 'all').map(university => (
+                  <SelectItem key={university} value={university}>
+                    {university}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select onValueChange={setSelectedYear} defaultValue="all">
+              <SelectTrigger className="w-full md:w-[150px]">
+                <SelectValue placeholder="Año" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todos los años</SelectItem>
+                {years.filter(y => y !== 'all').map(year => (
+                  <SelectItem key={year} value={year}>
+                    Año {year}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select onValueChange={setSelectedSkill} defaultValue="all">
+              <SelectTrigger className="w-full md:w-[200px]">
+                <Filter className="mr-2 h-4 w-4" />
+                <SelectValue placeholder="Habilidad" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todas las habilidades</SelectItem>
+                {skills.filter(s => s !== 'all').slice(0, 15).map(skill => (
+                  <SelectItem key={skill} value={skill}>
+                    {skill}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
-        </section>
 
-        {/* About Section */}
-        <section id="about" className="w-full py-12 md:py-24 lg:py-32 bg-muted">
-          <div className="container px-4 md:px-6">
-            <div className="flex flex-col items-center justify-center space-y-4 text-center">
-              <div className="space-y-2">
-                <div className="inline-block rounded-lg bg-muted-foreground/10 px-3 py-1 text-sm text-muted-foreground">Nuestro Club</div>
-                <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">Acerca de START</h2>
-                <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                  Conoce nuestra misión, los valores que nos guían y nuestra historia.
-                </p>
-              </div>
-            </div>
-            <div className="mx-auto grid max-w-5xl items-start gap-8 py-12 sm:grid-cols-3">
-              <div className="grid gap-1 text-center">
-                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary mb-4">
-                  <Rocket className="h-8 w-8" />
-                </div>
-                <h3 className="text-xl font-bold">Visión</h3>
-                <p className="text-sm text-muted-foreground">
-                  Ser el principal catalizador del emprendimiento universitario, transformando ideas académicas en empresas de impacto.
-                </p>
-              </div>
-              <div className="grid gap-1 text-center">
-                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary mb-4">
-                  <Award className="h-8 w-8" />
-                </div>
-                <h3 className="text-xl font-bold">Valores</h3>
-                <p className="text-sm text-muted-foreground">
-                  Fomentamos la colaboración, la innovación, la proactividad y el aprendizaje continuo en todos nuestros miembros.
-                </p>
-              </div>
-              <div className="grid gap-1 text-center">
-                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary mb-4">
-                  <Flag className="h-8 w-8" />
-                </div>
-                <h3 className="text-xl font-bold">Trayectoria</h3>
-                <p className="text-sm text-muted-foreground">
-                  Fundado en 2025, START nace de la necesidad de generar una red de emprendedores universitarios y ser un puente entre el talento del campus y el ecosistema de startups.
-                </p>
-              </div>
-            </div>
+          {/* Results count */}
+          <div className="mb-6">
+            <p className="text-sm text-muted-foreground">
+              Mostrando {filteredStudents.length} de {students.length} estudiantes
+            </p>
           </div>
+
+          {/* Students Grid */}
+          {filteredStudents.length > 0 ? (
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {filteredStudents.map(student => (
+                <StudentCard key={student.id} student={student} />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-16">
+              <UsersIcon className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+              <h3 className="text-2xl font-semibold mb-2">No se encontraron estudiantes</h3>
+              <p className="text-muted-foreground">Intenta ajustar tus filtros de búsqueda.</p>
+            </div>
+          )}
         </section>
       </main>
     </div>
