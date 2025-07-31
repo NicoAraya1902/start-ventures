@@ -1,91 +1,107 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import type { Student } from '@/data/students-data';
-import { MapPin, GraduationCap, Clock, Mail, Linkedin, Code, Lightbulb } from 'lucide-react';
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Mail, Phone } from "lucide-react";
+import { Student } from "@/data/students-data";
 
-const StudentCard = ({ student }: { student: Student }) => {
+export function StudentCard({ student }: { student: Student }) {
   return (
-    <Card className="flex flex-col h-full hover:shadow-lg transition-shadow">
-      <CardHeader className="text-center">
-        <div className="w-24 h-24 mx-auto overflow-hidden rounded-full mb-4">
-          <img 
-            src={student.profileImageUrl} 
-            alt={student.name} 
-            className="w-full h-full object-cover" 
+    <Card className="h-full">
+      <div className="p-6 space-y-4">
+        <div className="flex items-start gap-4">
+          <img
+            src={student.profileImageUrl}
+            alt={student.name}
+            className="w-16 h-16 rounded-full object-cover"
           />
+          <div className="flex-1 min-w-0">
+            <h3 className="font-semibold text-lg">{student.name}</h3>
+            <p className="text-sm text-muted-foreground">{student.degree}</p>
+            <p className="text-sm text-muted-foreground">{student.university}</p>
+            <p className="text-xs text-muted-foreground">Año {student.year} • {student.type}</p>
+          </div>
         </div>
-        <CardTitle className="text-lg">{student.name}</CardTitle>
-        <CardDescription className="text-sm">
-          <div className="flex items-center justify-center gap-1 mb-1">
-            <GraduationCap className="h-3 w-3" />
-            {student.degree} - Año {student.year}
-          </div>
-          <div className="flex items-center justify-center gap-1 mb-1">
-            <MapPin className="h-3 w-3" />
-            {student.university}
-          </div>
-          <div className="flex items-center justify-center gap-1">
-            <Clock className="h-3 w-3" />
-            {student.availability}
-          </div>
-        </CardDescription>
-      </CardHeader>
-      
-      <CardContent className="flex-grow space-y-4">
-        <p className="text-sm text-muted-foreground line-clamp-3">
-          {student.description}
-        </p>
-        
-        <div>
-          <h4 className="font-semibold text-sm mb-2">Perfil</h4>
-          <div className="flex flex-wrap gap-1 mb-2">
-            <Badge variant={student.isTechnical ? "default" : "secondary"} className="text-xs">
-              <Code className="h-3 w-3 mr-1" />
-              {student.isTechnical ? 'Técnico' : 'No técnico'}
+
+        {student.projectDescription && (
+          <p className="text-sm leading-relaxed">{student.projectDescription}</p>
+        )}
+
+        <div className="space-y-2">
+          <div className="flex gap-2 flex-wrap">
+            <Badge variant={student.type === "Emprendedor/a" ? "default" : "secondary"}>
+              {student.type}
             </Badge>
-            <Badge variant={student.hasIdea ? "default" : "outline"} className="text-xs">
-              <Lightbulb className="h-3 w-3 mr-1" />
-              {student.hasIdea ? 'Tiene idea' : 'Sin idea específica'}
+            <Badge variant={student.hasIdea ? "default" : "outline"}>
+              {student.hasIdea ? "Tiene idea" : "Buscando ideas"}
+            </Badge>
+            <Badge variant="outline">
+              {student.teamStatus}
             </Badge>
           </div>
-          <p className="text-xs text-muted-foreground">
-            <strong>Área de desarrollo:</strong> {student.projectArea}
-          </p>
-        </div>
-        
-        <div>
-          <h4 className="font-semibold text-sm mb-2">Intereses</h4>
-          <div className="flex flex-wrap gap-1">
-            {student.interests.slice(0, 2).map(interest => (
-              <Badge key={interest} variant="outline" className="text-xs">
-                {interest}
-              </Badge>
-            ))}
+          
+          {student.projectName && (
+            <div>
+              <p className="text-xs font-medium text-muted-foreground mb-1">Proyecto:</p>
+              <p className="text-sm font-medium">{student.projectName}</p>
+            </div>
+          )}
+
+          {student.projectSector && (
+            <div>
+              <p className="text-xs font-medium text-muted-foreground mb-1">Sector:</p>
+              <p className="text-sm">{student.projectSector}</p>
+            </div>
+          )}
+
+          {student.projectStage && (
+            <div>
+              <p className="text-xs font-medium text-muted-foreground mb-1">Etapa:</p>
+              <p className="text-sm">{student.projectStage}</p>
+            </div>
+          )}
+
+          <div>
+            <p className="text-xs font-medium text-muted-foreground mb-1">Busca apoyo en:</p>
+            <div className="flex flex-wrap gap-1">
+              {student.supportAreas.slice(0, 3).map((area, index) => (
+                <Badge key={index} variant="outline" className="text-xs">
+                  {area}
+                </Badge>
+              ))}
+              {student.supportAreas.length > 3 && (
+                <Badge variant="outline" className="text-xs">
+                  +{student.supportAreas.length - 3} más
+                </Badge>
+              )}
+            </div>
           </div>
         </div>
-        
-        <div>
-          <h4 className="font-semibold text-sm mb-2">Busca</h4>
-          <p className="text-xs text-muted-foreground line-clamp-2">
-            {student.lookingFor}
-          </p>
-        </div>
-        
-        <div className="flex justify-center gap-2 pt-2">
-          <Button size="sm" variant="outline" className="flex items-center gap-1">
-            <Mail className="h-3 w-3" />
-            Contactar
+
+        <div className="flex gap-2 pt-2">
+          <Button 
+            size="sm" 
+            variant="outline" 
+            className="flex-1"
+            onClick={() => window.open(`mailto:${student.email}`, '_blank')}
+          >
+            <Mail className="w-4 h-4 mr-1" />
+            Email
           </Button>
-          {student.contact.linkedin && (
-            <Button size="sm" variant="ghost" className="p-2">
-              <Linkedin className="h-3 w-3" />
+          {student.phone && (
+            <Button 
+              size="sm" 
+              variant="outline" 
+              className="flex-1"
+              onClick={() => window.open(`tel:${student.phone}`, '_blank')}
+            >
+              <Phone className="w-4 h-4 mr-1" />
+              Teléfono
             </Button>
           )}
         </div>
-      </CardContent>
+      </div>
     </Card>
   );
-};
+}
 
 export default StudentCard;
