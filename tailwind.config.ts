@@ -20,7 +20,8 @@ export default {
 		},
 		extend: {
       fontFamily: {
-        sans: ['Inter', 'sans-serif'],
+        sans: ['Nunito', 'sans-serif'],
+        condensed: ['Nunito', 'sans-serif'],
       },
 			colors: {
 				border: 'hsl(var(--border))',

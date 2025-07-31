@@ -17,7 +17,7 @@ const Header = () => {
         <div className="mr-4 flex items-center">
           <Link to="/" className="flex items-center space-x-2">
             <University className="h-6 w-6 text-primary" />
-            <span className="font-bold">START Matchmaking</span>
+            <span className="font-bold text-xl text-primary">AEMPRENDE</span>
           </Link>
         </div>
         <nav className="hidden items-center space-x-6 text-sm font-medium md:flex">

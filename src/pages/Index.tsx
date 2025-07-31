@@ -39,8 +39,8 @@ const Index = () => {
       <main className="flex-1">
         {/* Hero Section */}
         <section className="container pt-24 pb-12 text-center">
-          <h1 className="text-4xl font-extrabold tracking-tight lg:text-6xl">
-            Matchmaking de Emprendedores Universitarios
+          <h1 className="text-4xl font-black tracking-tight lg:text-6xl text-primary font-condensed">
+            MATCHMAKING DE EMPRENDEDORES UNIVERSITARIOS
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
             Conecta con estudiantes talentosos de todo Chile. Encuentra tu co-fundador ideal y forma el equipo perfecto para tu próxima startup.
