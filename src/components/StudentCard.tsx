@@ -2,7 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import type { Student } from '@/data/students-data';
-import { MapPin, GraduationCap, Clock, Mail, Linkedin, Github } from 'lucide-react';
+import { MapPin, GraduationCap, Clock, Mail, Linkedin, Code, Lightbulb } from 'lucide-react';
 
 const StudentCard = ({ student }: { student: Student }) => {
   return (
@@ -38,19 +38,20 @@ const StudentCard = ({ student }: { student: Student }) => {
         </p>
         
         <div>
-          <h4 className="font-semibold text-sm mb-2">Habilidades</h4>
-          <div className="flex flex-wrap gap-1">
-            {student.skills.slice(0, 3).map(skill => (
-              <Badge key={skill} variant="secondary" className="text-xs">
-                {skill}
-              </Badge>
-            ))}
-            {student.skills.length > 3 && (
-              <Badge variant="outline" className="text-xs">
-                +{student.skills.length - 3}
-              </Badge>
-            )}
+          <h4 className="font-semibold text-sm mb-2">Perfil</h4>
+          <div className="flex flex-wrap gap-1 mb-2">
+            <Badge variant={student.isTechnical ? "default" : "secondary"} className="text-xs">
+              <Code className="h-3 w-3 mr-1" />
+              {student.isTechnical ? 'Técnico' : 'No técnico'}
+            </Badge>
+            <Badge variant={student.hasIdea ? "default" : "outline"} className="text-xs">
+              <Lightbulb className="h-3 w-3 mr-1" />
+              {student.hasIdea ? 'Tiene idea' : 'Sin idea específica'}
+            </Badge>
           </div>
+          <p className="text-xs text-muted-foreground">
+            <strong>Área de desarrollo:</strong> {student.projectArea}
+          </p>
         </div>
         
         <div>
@@ -79,11 +80,6 @@ const StudentCard = ({ student }: { student: Student }) => {
           {student.contact.linkedin && (
             <Button size="sm" variant="ghost" className="p-2">
               <Linkedin className="h-3 w-3" />
-            </Button>
-          )}
-          {student.contact.github && (
-            <Button size="sm" variant="ghost" className="p-2">
-              <Github className="h-3 w-3" />
             </Button>
           )}
         </div>

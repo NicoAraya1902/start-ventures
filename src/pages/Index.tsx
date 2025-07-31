@@ -15,23 +15,23 @@ const Index = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedUniversity, setSelectedUniversity] = useState('all');
   const [selectedYear, setSelectedYear] = useState('all');
-  const [selectedSkill, setSelectedSkill] = useState('all');
+  const [selectedProjectArea, setSelectedProjectArea] = useState('all');
   const [selectedRegion, setSelectedRegion] = useState('all');
 
   const universities = ['all', ...Array.from(new Set(students.map(s => s.university)))];
   const years = ['all', ...Array.from(new Set(students.map(s => s.year.toString())))];
-  const skills = ['all', ...Array.from(new Set(students.flatMap(s => s.skills)))];
+  const projectAreas = ['all', ...Array.from(new Set(students.map(s => s.projectArea)))];
   const regions = ['all', ...Array.from(new Set(students.map(s => s.region)))];
 
   const filteredStudents = students.filter(student => {
-    const searchContent = `${student.name} ${student.description} ${student.skills.join(' ')} ${student.interests.join(' ')}`.toLowerCase();
+    const searchContent = `${student.name} ${student.description} ${student.projectArea} ${student.interests.join(' ')}`.toLowerCase();
     const matchesSearch = searchContent.includes(searchTerm.toLowerCase());
     const matchesUniversity = selectedUniversity === 'all' || student.university === selectedUniversity;
     const matchesYear = selectedYear === 'all' || student.year.toString() === selectedYear;
-    const matchesSkill = selectedSkill === 'all' || student.skills.includes(selectedSkill);
+    const matchesProjectArea = selectedProjectArea === 'all' || student.projectArea === selectedProjectArea;
     const matchesRegion = selectedRegion === 'all' || student.region === selectedRegion;
     
-    return matchesSearch && matchesUniversity && matchesYear && matchesSkill && matchesRegion;
+    return matchesSearch && matchesUniversity && matchesYear && matchesProjectArea && matchesRegion;
   });
 
   return (
@@ -100,16 +100,16 @@ const Index = () => {
                 ))}
               </SelectContent>
             </Select>
-            <Select onValueChange={setSelectedSkill} defaultValue="all">
+            <Select onValueChange={setSelectedProjectArea} defaultValue="all">
               <SelectTrigger className="w-full lg:w-[200px]">
                 <Filter className="mr-2 h-4 w-4" />
-                <SelectValue placeholder="Habilidad" />
+                <SelectValue placeholder="Área de proyecto" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Todas las habilidades</SelectItem>
-                {skills.filter(s => s !== 'all').slice(0, 15).map(skill => (
-                  <SelectItem key={skill} value={skill}>
-                    {skill}
+                <SelectItem value="all">Todas las áreas</SelectItem>
+                {projectAreas.filter(s => s !== 'all').map(area => (
+                  <SelectItem key={area} value={area}>
+                    {area}
                   </SelectItem>
                 ))}
               </SelectContent>
