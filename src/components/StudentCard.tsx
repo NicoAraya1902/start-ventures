@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Mail, Phone } from "lucide-react";
 import { Student } from "@/data/students-data";
+import { MessageDialog } from "@/components/messaging/MessageDialog";
 
 export function StudentCard({ student }: { student: Student }) {
   return (
@@ -78,6 +79,10 @@ export function StudentCard({ student }: { student: Student }) {
         </div>
 
         <div className="flex gap-2 pt-2">
+          <MessageDialog 
+            recipientId={student.id} 
+            recipientName={student.name}
+          />
           <Button 
             size="sm" 
             variant="outline" 

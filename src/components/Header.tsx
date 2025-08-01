@@ -2,52 +2,82 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, University } from 'lucide-react';
+import { Menu } from 'lucide-react';
+import { useAuth } from "@/contexts/AuthContext";
+import { LoginButton } from "@/components/auth/LoginButton";
+import { UserMenu } from "@/components/auth/UserMenu";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const Header = () => {
-  const navLinks = [
-    { name: 'Estudiantes', href: '/' },
-    { name: 'Cómo Funciona', href: '/#how-it-works' },
-    { name: 'Acerca de', href: '/#about' },
-  ];
+  const { user } = useAuth();
+  const isMobile = useIsMobile();
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-14 items-center">
-        <div className="mr-4 flex items-center">
-          <Link to="/" className="flex items-center space-x-2">
-            <University className="h-6 w-6 text-primary" />
-            <span className="font-bold text-xl text-primary">AEMPRENDE</span>
+      <div className="container mx-auto flex h-16 items-center justify-between px-4">
+        <Link to="/" className="flex items-center space-x-2">
+          <div className="h-8 w-8 bg-primary rounded-lg flex items-center justify-center">
+            <span className="text-primary-foreground font-bold text-sm">M</span>
+          </div>
+          <span className="text-lg font-bold text-foreground">Mural Estudiantil</span>
+        </Link>
+
+        <nav className="hidden md:flex items-center space-x-6">
+          <Link 
+            to="/" 
+            className="text-sm font-medium text-foreground hover:text-primary transition-colors"
+          >
+            Inicio
           </Link>
-        </div>
-        <nav className="hidden items-center space-x-6 text-sm font-medium md:flex">
-          {navLinks.map(link => (
-            <Link key={link.name} to={link.href} className="transition-colors hover:text-foreground/80 text-foreground/60">
-              {link.name}
-            </Link>
-          ))}
+          <Link 
+            to="/explore" 
+            className="text-sm font-medium text-foreground hover:text-primary transition-colors"
+          >
+            Explorar
+          </Link>
+          <Link 
+            to="/news" 
+            className="text-sm font-medium text-foreground hover:text-primary transition-colors"
+          >
+            Noticias
+          </Link>
+          <Link 
+            to="/create-project" 
+            className="text-sm font-medium text-foreground hover:text-primary transition-colors"
+          >
+            Crear Proyecto
+          </Link>
         </nav>
-        <div className="flex flex-1 items-center justify-end space-x-2">
-          <Button variant="ghost" asChild>
-            <Link to="#">Iniciar Sesión</Link>
-          </Button>
-          <Button asChild>
-            <Link to="#">Únete al Mural</Link>
-          </Button>
+
+        <div className="flex items-center gap-3">
+          {user ? (
+            <UserMenu />
+          ) : (
+            <LoginButton />
+          )}
+          
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant="ghost" className="md:hidden">
+              <Button variant="ghost" size="sm" className="md:hidden">
                 <Menu className="h-5 w-5" />
-                <span className="sr-only">Toggle Menu</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="right">
-              <div className="flex flex-col space-y-4 pt-6">
-                {navLinks.map(link => (
-                  <Link key={link.name} to={link.href} className="text-lg font-medium transition-colors hover:text-primary">
-                    {link.name}
-                  </Link>
-                ))}
+            <SheetContent>
+              <div className="flex flex-col space-y-4 mt-4">
+                <Link to="/" className="text-lg font-medium">Inicio</Link>
+                <Link to="/explore" className="text-lg font-medium">Explorar</Link>
+                <Link to="/news" className="text-lg font-medium">Noticias</Link>
+                <Link to="/create-project" className="text-lg font-medium">Crear Proyecto</Link>
+                {user ? (
+                  <>
+                    <Link to="/profile" className="text-lg font-medium">Perfil</Link>
+                    <Link to="/messages" className="text-lg font-medium">Mensajes</Link>
+                  </>
+                ) : (
+                  <div className="space-y-2">
+                    <LoginButton />
+                  </div>
+                )}
               </div>
             </SheetContent>
           </Sheet>

@@ -12,6 +12,9 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import CreateProjectPage from "./pages/CreateProject";
 import News from "./pages/News";
+import Messages from "./pages/Messages";
+import Profile from "./pages/Profile";
+import { AuthProvider } from "@/contexts/AuthContext";
 
 const queryClient = new QueryClient();
 
@@ -29,22 +32,26 @@ const Layout = () => {
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Layout />}>
-            <Route index element={<Index />} />
-            <Route path="explore" element={<Explore />} />
-            <Route path="news" element={<News />} />
-            <Route path="create-project" element={<CreateProjectPage />} />
-            <Route path="project/:id" element={<ProjectPage />} />
-            <Route path="*" element={<NotFound />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
+    <AuthProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Layout />}>
+              <Route index element={<Index />} />
+              <Route path="explore" element={<Explore />} />
+              <Route path="news" element={<News />} />
+              <Route path="create-project" element={<CreateProjectPage />} />
+              <Route path="project/:id" element={<ProjectPage />} />
+              <Route path="messages" element={<Messages />} />
+              <Route path="profile" element={<Profile />} />
+              <Route path="*" element={<NotFound />} />
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </AuthProvider>
   </QueryClientProvider>
 );
 
