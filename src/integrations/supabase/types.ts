@@ -14,7 +14,102 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      messages: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          read: boolean
+          receiver_id: string
+          sender_id: string
+          subject: string | null
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          read?: boolean
+          receiver_id: string
+          sender_id: string
+          subject?: string | null
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          read?: boolean
+          receiver_id?: string
+          sender_id?: string
+          subject?: string | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          career: string | null
+          created_at: string
+          email: string | null
+          entrepreneur_type: string | null
+          full_name: string | null
+          gender: string | null
+          id: string
+          phone: string | null
+          project_description: string | null
+          project_name: string | null
+          project_sector: string | null
+          project_stage: string | null
+          support_areas: string[] | null
+          team_size: number | null
+          team_status: string | null
+          updated_at: string
+          user_id: string
+          year: number | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          career?: string | null
+          created_at?: string
+          email?: string | null
+          entrepreneur_type?: string | null
+          full_name?: string | null
+          gender?: string | null
+          id?: string
+          phone?: string | null
+          project_description?: string | null
+          project_name?: string | null
+          project_sector?: string | null
+          project_stage?: string | null
+          support_areas?: string[] | null
+          team_size?: number | null
+          team_status?: string | null
+          updated_at?: string
+          user_id: string
+          year?: number | null
+        }
+        Update: {
+          avatar_url?: string | null
+          career?: string | null
+          created_at?: string
+          email?: string | null
+          entrepreneur_type?: string | null
+          full_name?: string | null
+          gender?: string | null
+          id?: string
+          phone?: string | null
+          project_description?: string | null
+          project_name?: string | null
+          project_sector?: string | null
+          project_stage?: string | null
+          support_areas?: string[] | null
+          team_size?: number | null
+          team_status?: string | null
+          updated_at?: string
+          user_id?: string
+          year?: number | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
