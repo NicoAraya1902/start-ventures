@@ -14,6 +14,7 @@ import CreateProjectPage from "./pages/CreateProject";
 import News from "./pages/News";
 import Messages from "./pages/Messages";
 import Profile from "./pages/Profile";
+import Auth from "./pages/Auth";
 import { AuthProvider } from "@/contexts/AuthContext";
 
 const queryClient = new QueryClient();
@@ -46,6 +47,7 @@ const App = () => (
               <Route path="project/:id" element={<ProjectPage />} />
               <Route path="messages" element={<Messages />} />
               <Route path="profile" element={<Profile />} />
+              <Route path="auth" element={<Auth />} />
               <Route path="*" element={<NotFound />} />
             </Route>
           </Routes>

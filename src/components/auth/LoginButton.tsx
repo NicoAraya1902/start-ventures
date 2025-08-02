@@ -1,19 +1,18 @@
 import { Button } from "@/components/ui/button";
-import { useAuth } from "@/contexts/AuthContext";
 import { LogIn } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export function LoginButton() {
-  const { signInWithGoogle, loading } = useAuth();
-
   return (
     <Button
-      onClick={signInWithGoogle}
-      disabled={loading}
+      asChild
       variant="outline"
       className="gap-2"
     >
-      <LogIn className="h-4 w-4" />
-      Iniciar Sesión con Google
+      <Link to="/auth">
+        <LogIn className="h-4 w-4" />
+        Iniciar Sesión
+      </Link>
     </Button>
   );
 }
