@@ -17,6 +17,7 @@ export interface Student {
   profileImageUrl: string;
   hasIdea: boolean;
   phone?: string;
+  linkedinUrl?: string;
   university: string;
   location: string;
   region: string;
@@ -42,6 +43,7 @@ export const students: Student[] = [
     profileImageUrl: 'https://images.unsplash.com/photo-1581092795360-fd1ca04f0952?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
     hasIdea: true,
     phone: '+56944986557',
+    linkedinUrl: 'https://linkedin.com/in/nicolas-araya',
     university: 'Universidad de Chile',
     location: 'Santiago',
     region: 'Metropolitana'
@@ -106,6 +108,7 @@ export const students: Student[] = [
     profileImageUrl: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
     hasIdea: true,
     phone: '959100996',
+    linkedinUrl: 'https://linkedin.com/in/cristobal-magana',
     university: 'Universidad de Chile',
     location: 'Santiago',
     region: 'Metropolitana'
@@ -391,6 +394,7 @@ export const students: Student[] = [
     profileImageUrl: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
     hasIdea: true,
     phone: '+56956621761',
+    linkedinUrl: 'https://linkedin.com/in/sofia-guerrero-zamora',
     university: 'Universidad de Chile',
     location: 'Santiago',
     region: 'Metropolitana'

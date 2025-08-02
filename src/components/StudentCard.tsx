@@ -1,11 +1,13 @@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Mail, Phone } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 import { Student } from "@/data/students-data";
-import { MessageDialog } from "@/components/messaging/MessageDialog";
+import { ChatDialog } from "@/components/messaging/ChatDialog";
+import { useAuth } from "@/contexts/AuthContext";
 
 export function StudentCard({ student }: { student: Student }) {
+  const { user } = useAuth();
   return (
     <Card className="h-full">
       <div className="p-6 space-y-4">
@@ -79,29 +81,25 @@ export function StudentCard({ student }: { student: Student }) {
         </div>
 
         <div className="flex gap-2 pt-2">
-          <MessageDialog 
-            recipientId={student.id} 
-            recipientName={student.name}
-          />
-          <Button 
-            size="sm" 
-            variant="outline" 
-            className="flex-1"
-            onClick={() => window.open(`mailto:${student.email}`, '_blank')}
-          >
-            <Mail className="w-4 h-4 mr-1" />
-            Email
-          </Button>
-          {student.phone && (
-            <Button 
-              size="sm" 
-              variant="outline" 
-              className="flex-1"
-              onClick={() => window.open(`tel:${student.phone}`, '_blank')}
-            >
-              <Phone className="w-4 h-4 mr-1" />
-              Teléfono
-            </Button>
+          {user ? (
+            // Usuario autenticado: mostrar chat
+            <ChatDialog 
+              recipientId={student.id} 
+              recipientName={student.name}
+            />
+          ) : (
+            // Usuario no autenticado: mostrar LinkedIn si existe
+            student.linkedinUrl && (
+              <Button 
+                size="sm" 
+                variant="outline" 
+                className="flex-1"
+                onClick={() => window.open(student.linkedinUrl, '_blank')}
+              >
+                <ExternalLink className="w-4 h-4 mr-1" />
+                LinkedIn
+              </Button>
+            )
           )}
         </div>
       </div>
