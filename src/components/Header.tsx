@@ -30,12 +30,6 @@ const Header = () => {
             Inicio
           </Link>
           <Link 
-            to="/explore" 
-            className="text-sm font-medium text-foreground hover:text-primary transition-colors"
-          >
-            Explorar
-          </Link>
-          <Link 
             to="/news" 
             className="text-sm font-medium text-foreground hover:text-primary transition-colors"
           >
@@ -65,7 +59,7 @@ const Header = () => {
             <SheetContent>
               <div className="flex flex-col space-y-4 mt-4">
                 <Link to="/" className="text-lg font-medium">Inicio</Link>
-                <Link to="/explore" className="text-lg font-medium">Explorar</Link>
+                
                 <Link to="/news" className="text-lg font-medium">Noticias</Link>
                 <Link to="/create-project" className="text-lg font-medium">Crear Proyecto</Link>
                 {user ? (
