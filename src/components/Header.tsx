@@ -35,12 +35,6 @@ const Header = () => {
           >
             Noticias
           </Link>
-          <Link 
-            to="/create-project" 
-            className="text-sm font-medium text-foreground hover:text-primary transition-colors"
-          >
-            Crear Proyecto
-          </Link>
         </nav>
 
         <div className="flex items-center gap-3">
@@ -61,7 +55,7 @@ const Header = () => {
                 <Link to="/" className="text-lg font-medium">Inicio</Link>
                 
                 <Link to="/news" className="text-lg font-medium">Noticias</Link>
-                <Link to="/create-project" className="text-lg font-medium">Crear Proyecto</Link>
+                
                 {user ? (
                   <>
                     <Link to="/profile" className="text-lg font-medium">Perfil</Link>

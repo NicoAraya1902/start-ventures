@@ -10,7 +10,7 @@ import ProjectPage from "./pages/Project";
 import NotFound from "./pages/NotFound";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
-import CreateProjectPage from "./pages/CreateProject";
+
 import News from "./pages/News";
 import Messages from "./pages/Messages";
 import Profile from "./pages/Profile";
@@ -43,7 +43,7 @@ const App = () => (
               <Route index element={<Index />} />
               
               <Route path="news" element={<News />} />
-              <Route path="create-project" element={<CreateProjectPage />} />
+              
               <Route path="project/:id" element={<ProjectPage />} />
               <Route path="messages" element={<Messages />} />
               <Route path="profile" element={<Profile />} />
