@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ExternalLink } from "lucide-react";
 import { Student } from "@/data/students-data";
-import { ChatDialog } from "@/components/messaging/ChatDialog";
+import { ContactRequestDialog } from "@/components/messaging/ContactRequestDialog";
 import { useAuth } from "@/contexts/AuthContext";
 
 export function StudentCard({ student }: { student: Student }) {
@@ -82,10 +82,9 @@ export function StudentCard({ student }: { student: Student }) {
 
         <div className="flex gap-2 pt-2">
           {user ? (
-            // Usuario autenticado: mostrar chat
-            <ChatDialog 
-              recipientId={student.id} 
-              recipientName={student.name}
+            <ContactRequestDialog 
+              receiverId={student.id} 
+              receiverName={student.name}
             />
           ) : (
             // Usuario no autenticado: mostrar LinkedIn si existe
