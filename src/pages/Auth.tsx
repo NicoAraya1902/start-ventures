@@ -33,7 +33,10 @@ export default function Auth() {
 
   const isUniversityEmail = (email: string) => {
     const domain = email.split('@')[1];
-    return UNIVERSITY_DOMAINS.includes(domain);
+    // Check exact domain or if it ends with any university domain
+    return UNIVERSITY_DOMAINS.some(universityDomain => 
+      domain === universityDomain || domain.endsWith('.' + universityDomain)
+    );
   };
 
   const handleSignUp = async (e: React.FormEvent) => {
