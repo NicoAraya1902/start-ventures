@@ -92,6 +92,7 @@ export type Database = {
           support_areas: string[] | null
           team_size: number | null
           team_status: string | null
+          university: string | null
           updated_at: string
           user_id: string
           year: number | null
@@ -113,6 +114,7 @@ export type Database = {
           support_areas?: string[] | null
           team_size?: number | null
           team_status?: string | null
+          university?: string | null
           updated_at?: string
           user_id: string
           year?: number | null
@@ -134,6 +136,7 @@ export type Database = {
           support_areas?: string[] | null
           team_size?: number | null
           team_status?: string | null
+          university?: string | null
           updated_at?: string
           user_id?: string
           year?: number | null
