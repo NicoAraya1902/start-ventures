@@ -10,7 +10,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { User, Save, Mail, Phone } from "lucide-react";
+import { User, Save, Mail, Phone, Upload, Camera } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface Profile {
   id: string;
@@ -20,6 +21,7 @@ interface Profile {
   phone: string | null;
   avatar_url: string | null;
   career: string | null;
+  university: string | null;
   year: number | null;
   gender: string | null;
   entrepreneur_type: string | null;
@@ -34,9 +36,11 @@ interface Profile {
 
 export default function Profile() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -44,6 +48,19 @@ export default function Profile() {
 
     fetchProfile();
   }, [user]);
+
+  const isProfileComplete = (profile: Profile | null) => {
+    if (!profile) return false;
+    return Boolean(
+      profile.full_name &&
+      profile.university &&
+      profile.career &&
+      profile.year &&
+      profile.gender &&
+      profile.entrepreneur_type &&
+      profile.team_status
+    );
+  };
 
   const fetchProfile = async () => {
     if (!user) return;
@@ -61,13 +78,23 @@ export default function Profile() {
 
       if (data) {
         setProfile(data);
+        // Check if profile is complete and if we're not on profile page, redirect to home
+        if (isProfileComplete(data) && window.location.pathname === '/profile') {
+          // Only redirect if we came from login, not manual navigation
+          const fromLogin = sessionStorage.getItem('fromLogin');
+          if (fromLogin) {
+            sessionStorage.removeItem('fromLogin');
+            navigate('/');
+          }
+        }
       } else {
-        // Create initial profile
+        // Create initial profile with default team_status
         const newProfile = {
           user_id: user.id,
           full_name: user.user_metadata?.full_name || "",
           email: user.email || "",
           avatar_url: user.user_metadata?.avatar_url || "",
+          team_status: 'buscando', // Default to actively searching
         };
 
         const { data: createdProfile, error: createError } = await supabase
@@ -92,6 +119,51 @@ export default function Profile() {
     }
   };
 
+  const uploadAvatar = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file || !user) return;
+
+    setUploading(true);
+
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${user.id}/${Math.random()}.${fileExt}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(fileName, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data } = supabase.storage
+        .from('avatars')
+        .getPublicUrl(fileName);
+
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({ avatar_url: data.publicUrl })
+        .eq('user_id', user.id);
+
+      if (updateError) throw updateError;
+
+      setProfile(prev => prev ? { ...prev, avatar_url: data.publicUrl } : null);
+
+      toast({
+        title: "Avatar actualizado",
+        description: "Tu foto de perfil ha sido actualizada",
+      });
+    } catch (error) {
+      console.error('Error uploading avatar:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "No se pudo subir la imagen",
+      });
+    } finally {
+      setUploading(false);
+    }
+  };
+
   const handleSave = async () => {
     if (!user || !profile) return;
 
@@ -103,6 +175,7 @@ export default function Profile() {
         .update({
           full_name: profile.full_name,
           phone: profile.phone,
+          university: profile.university,
           career: profile.career,
           year: profile.year,
           gender: profile.gender,
@@ -177,24 +250,48 @@ export default function Profile() {
   return (
     <div className="container mx-auto py-8 max-w-4xl">
       <div className="space-y-6">
-        {/* Header */}
+         {/* Header with Avatar Upload */}
         <Card>
           <CardHeader>
             <div className="flex items-center gap-4">
-              <Avatar className="h-16 w-16">
-                <AvatarImage src={profile?.avatar_url || ""} alt={profile?.full_name || ""} />
-                <AvatarFallback>
-                  <User className="h-8 w-8" />
-                </AvatarFallback>
-              </Avatar>
-              <div>
+              <div className="relative">
+                <Avatar className="h-16 w-16">
+                  <AvatarImage src={profile?.avatar_url || ""} alt={profile?.full_name || ""} />
+                  <AvatarFallback>
+                    <User className="h-8 w-8" />
+                  </AvatarFallback>
+                </Avatar>
+                <label htmlFor="avatar-upload" className="absolute -bottom-1 -right-1 bg-primary text-primary-foreground rounded-full p-1 cursor-pointer hover:bg-primary/90 transition-colors">
+                  <Camera className="h-3 w-3" />
+                </label>
+                <input
+                  id="avatar-upload"
+                  type="file"
+                  accept="image/*"
+                  onChange={uploadAvatar}
+                  className="hidden"
+                  disabled={uploading}
+                />
+              </div>
+              <div className="flex-1">
                 <CardTitle className="flex items-center gap-2">
                   <User className="h-5 w-5" />
                   Mi Perfil
+                  {!isProfileComplete(profile) && (
+                    <Badge variant="outline" className="text-orange-600 border-orange-600">
+                      Incompleto
+                    </Badge>
+                  )}
                 </CardTitle>
                 <CardDescription>
-                  Actualiza tu información personal y de proyecto
+                  {!isProfileComplete(profile) 
+                    ? "Completa tu información para aparecer en el mural"
+                    : "Actualiza tu información personal y de proyecto"
+                  }
                 </CardDescription>
+                {uploading && (
+                  <p className="text-sm text-muted-foreground mt-1">Subiendo imagen...</p>
+                )}
               </div>
             </div>
           </CardHeader>
@@ -266,32 +363,43 @@ export default function Profile() {
             <CardTitle>Información Académica</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="career">Carrera</Label>
+                <Label htmlFor="university">Universidad/Institución</Label>
                 <Input
-                  id="career"
-                  value={profile?.career || ""}
-                  onChange={(e) => updateProfile("career", e.target.value)}
+                  id="university"
+                  value={profile?.university || ""}
+                  onChange={(e) => updateProfile("university", e.target.value)}
+                  placeholder="Ej: Universidad de Chile, DUOC UC, etc."
                 />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="year">Año</Label>
-                <Select
-                  value={profile?.year?.toString() || ""}
-                  onValueChange={(value) => updateProfile("year", parseInt(value))}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecciona año" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {[1, 2, 3, 4, 5].map((year) => (
-                      <SelectItem key={year} value={year.toString()}>
-                        {year}° año
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="career">Carrera</Label>
+                  <Input
+                    id="career"
+                    value={profile?.career || ""}
+                    onChange={(e) => updateProfile("career", e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="year">Año</Label>
+                  <Select
+                    value={profile?.year?.toString() || ""}
+                    onValueChange={(value) => updateProfile("year", parseInt(value))}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecciona año" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {[1, 2, 3, 4, 5].map((year) => (
+                        <SelectItem key={year} value={year.toString()}>
+                          {year}° año
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
             </div>
           </CardContent>

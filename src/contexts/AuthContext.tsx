@@ -34,6 +34,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
         setLoading(false);
 
         if (event === 'SIGNED_IN') {
+          // Set flag that user just logged in
+          sessionStorage.setItem('fromLogin', 'true');
           toast({
             title: "¡Bienvenido!",
             description: "Has iniciado sesión correctamente",

@@ -16,6 +16,7 @@ import Messages from "./pages/Messages";
 import Profile from "./pages/Profile";
 import Auth from "./pages/Auth";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { ProfileCheck } from "@/components/ProfileCheck";
 
 const queryClient = new QueryClient();
 
@@ -40,12 +41,12 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Layout />}>
-              <Route index element={<Index />} />
+              <Route index element={<ProfileCheck><Index /></ProfileCheck>} />
               
-              <Route path="news" element={<News />} />
+              <Route path="news" element={<ProfileCheck><News /></ProfileCheck>} />
               
-              <Route path="project/:id" element={<ProjectPage />} />
-              <Route path="messages" element={<Messages />} />
+              <Route path="project/:id" element={<ProfileCheck><ProjectPage /></ProfileCheck>} />
+              <Route path="messages" element={<ProfileCheck><Messages /></ProfileCheck>} />
               <Route path="profile" element={<Profile />} />
               <Route path="auth" element={<Auth />} />
               <Route path="*" element={<NotFound />} />
