@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Input } from "@/components/ui/input";
 import { Search, Filter, Users as UsersIcon, GraduationCap, MapPin } from 'lucide-react';
 import {
@@ -9,7 +9,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import StudentCard from '@/components/StudentCard';
-import { students } from '@/data/students-data';
+import { supabase } from '@/integrations/supabase/client';
+import type { Student } from '@/data/students-data';
 
 const Index = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -17,6 +18,63 @@ const Index = () => {
   const [selectedYear, setSelectedYear] = useState('all');
   const [selectedProjectSector, setSelectedProjectSector] = useState('all');
   const [selectedRegion, setSelectedRegion] = useState('all');
+  const [students, setStudents] = useState<Student[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProfiles = async () => {
+      try {
+        const { data: profiles, error } = await supabase
+          .from('profiles')
+          .select('*')
+          .not('full_name', 'is', null)
+          .not('university', 'is', null)
+          .not('career', 'is', null)
+          .not('year', 'is', null)
+          .not('gender', 'is', null)
+          .not('entrepreneur_type', 'is', null)
+          .not('team_status', 'is', null);
+
+        if (error) {
+          console.error('Error fetching profiles:', error);
+          return;
+        }
+
+        const transformedStudents: Student[] = profiles?.map(profile => ({
+          id: profile.id,
+          name: profile.full_name || '',
+          email: profile.email || '',
+          institutionalEmail: profile.email || '',
+          degree: profile.career || '',
+          year: profile.year || 1,
+          gender: profile.gender || '',
+          type: profile.entrepreneur_type as 'Emprendedor/a' | 'Entusiasta',
+          projectName: profile.project_name || undefined,
+          projectDescription: profile.project_description || undefined,
+          projectStage: profile.project_stage || undefined,
+          projectSector: profile.project_sector || undefined,
+          teamStatus: profile.team_status === 'buscando' ? 'Solo/a' : 'En equipo',
+          teamSize: profile.team_size || undefined,
+          supportAreas: profile.support_areas || [],
+          profileImageUrl: profile.avatar_url || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
+          hasIdea: !!profile.project_name,
+          phone: profile.phone || undefined,
+          linkedinUrl: undefined,
+          university: profile.university || '',
+          location: 'Santiago',
+          region: 'Metropolitana'
+        })) || [];
+
+        setStudents(transformedStudents);
+      } catch (error) {
+        console.error('Error:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfiles();
+  }, []);
 
   const universities = ['all', ...Array.from(new Set(students.map(s => s.university)))];
   const years = ['all', ...Array.from(new Set(students.map(s => s.year.toString())))];
@@ -124,7 +182,12 @@ const Index = () => {
           </div>
 
           {/* Students Grid */}
-          {filteredStudents.length > 0 ? (
+          {loading ? (
+            <div className="text-center py-16">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+              <p className="text-muted-foreground">Cargando perfiles...</p>
+            </div>
+          ) : filteredStudents.length > 0 ? (
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {filteredStudents.map(student => (
                 <StudentCard key={student.id} student={student} />
