@@ -21,6 +21,7 @@ export interface Student {
   university: string;
   location: string;
   region: string;
+  userType?: 'universitario' | 'no_universitario';
 }
 
 export const students: Student[] = [

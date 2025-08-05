@@ -20,8 +20,18 @@ export function StudentCard({ student }: { student: Student }) {
           <div className="flex-1 min-w-0">
             <h3 className="font-semibold text-lg">{student.name}</h3>
             <p className="text-sm text-muted-foreground">{student.degree}</p>
-            <p className="text-sm text-muted-foreground">{student.university}</p>
-            <p className="text-xs text-muted-foreground">Año {student.year} • {student.type}</p>
+            <p className="text-sm text-muted-foreground">
+              {student.userType === 'universitario' ? student.university : 'Profesional'}
+            </p>
+            <p className="text-xs text-muted-foreground">
+              {student.userType === 'universitario' 
+                ? `Año ${student.year} • ${student.type}`
+                : `${student.year} años exp. • ${student.type}`
+              }
+            </p>
+            <Badge variant={student.userType === 'universitario' ? 'default' : 'secondary'} className="text-xs mt-1">
+              {student.userType === 'universitario' ? 'Universitario' : 'Profesional'}
+            </Badge>
           </div>
         </div>
 

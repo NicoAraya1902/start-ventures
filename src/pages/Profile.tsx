@@ -20,9 +20,12 @@ interface Profile {
   email: string | null;
   phone: string | null;
   avatar_url: string | null;
+  user_type: 'universitario' | 'no_universitario' | null;
   career: string | null;
   university: string | null;
   year: number | null;
+  profession: string | null;
+  experience_years: number | null;
   gender: string | null;
   entrepreneur_type: string | null;
   project_name: string | null;
@@ -51,15 +54,29 @@ export default function Profile() {
 
   const isProfileComplete = (profile: Profile | null) => {
     if (!profile) return false;
-    return Boolean(
+    
+    const baseFields = Boolean(
       profile.full_name &&
-      profile.university &&
-      profile.career &&
-      profile.year &&
+      profile.user_type &&
       profile.gender &&
       profile.entrepreneur_type &&
       profile.team_status
     );
+
+    if (profile.user_type === 'universitario') {
+      return baseFields && Boolean(
+        profile.university &&
+        profile.career &&
+        profile.year
+      );
+    } else if (profile.user_type === 'no_universitario') {
+      return baseFields && Boolean(
+        profile.profession &&
+        profile.experience_years
+      );
+    }
+
+    return false;
   };
 
   const fetchProfile = async () => {
@@ -77,9 +94,9 @@ export default function Profile() {
       }
 
       if (data) {
-        setProfile(data);
+        setProfile(data as Profile);
         // Check if profile is complete and if we're not on profile page, redirect to home
-        if (isProfileComplete(data) && window.location.pathname === '/profile') {
+        if (isProfileComplete(data as Profile) && window.location.pathname === '/profile') {
           // Only redirect if we came from login, not manual navigation
           const fromLogin = sessionStorage.getItem('fromLogin');
           if (fromLogin) {
@@ -95,6 +112,7 @@ export default function Profile() {
           email: user.email || "",
           avatar_url: user.user_metadata?.avatar_url || "",
           team_status: 'buscando', // Default to actively searching
+          user_type: 'universitario' as const, // Default to university user
         };
 
         const { data: createdProfile, error: createError } = await supabase
@@ -105,7 +123,7 @@ export default function Profile() {
 
         if (createError) throw createError;
 
-        setProfile(createdProfile);
+        setProfile(createdProfile as Profile);
       }
     } catch (error) {
       console.error("Error fetching profile:", error);
@@ -175,9 +193,12 @@ export default function Profile() {
         .update({
           full_name: profile.full_name,
           phone: profile.phone,
+          user_type: profile.user_type,
           university: profile.university,
           career: profile.career,
           year: profile.year,
+          profession: profile.profession,
+          experience_years: profile.experience_years,
           gender: profile.gender,
           entrepreneur_type: profile.entrepreneur_type,
           project_name: profile.project_name,
@@ -303,6 +324,23 @@ export default function Profile() {
             <CardTitle>Información Personal</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
+            {/* User Type Selection */}
+            <div className="space-y-2">
+              <Label htmlFor="user_type">Tipo de Usuario</Label>
+              <Select
+                value={profile?.user_type || ""}
+                onValueChange={(value) => updateProfile("user_type", value as 'universitario' | 'no_universitario')}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecciona tipo de usuario" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="universitario">Universitario</SelectItem>
+                  <SelectItem value="no_universitario">No Universitario</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="full_name">Nombre Completo</Label>
@@ -357,53 +395,86 @@ export default function Profile() {
           </CardContent>
         </Card>
 
-        {/* Academic Information */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Información Académica</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="university">Universidad/Institución</Label>
-                <Input
-                  id="university"
-                  value={profile?.university || ""}
-                  onChange={(e) => updateProfile("university", e.target.value)}
-                  placeholder="Ej: Universidad de Chile, DUOC UC, etc."
-                />
+        {/* Academic/Professional Information */}
+        {profile?.user_type === 'universitario' && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Información Académica</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="university">Universidad/Institución</Label>
+                  <Input
+                    id="university"
+                    value={profile?.university || ""}
+                    onChange={(e) => updateProfile("university", e.target.value)}
+                    placeholder="Ej: Universidad de Chile, DUOC UC, etc."
+                  />
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="career">Carrera</Label>
+                    <Input
+                      id="career"
+                      value={profile?.career || ""}
+                      onChange={(e) => updateProfile("career", e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="year">Año</Label>
+                    <Select
+                      value={profile?.year?.toString() || ""}
+                      onValueChange={(value) => updateProfile("year", parseInt(value))}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecciona año" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {[1, 2, 3, 4, 5, 6].map((year) => (
+                          <SelectItem key={year} value={year.toString()}>
+                            {year}° año
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
               </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {profile?.user_type === 'no_universitario' && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Información Profesional</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="career">Carrera</Label>
+                  <Label htmlFor="profession">Profesión/Ocupación</Label>
                   <Input
-                    id="career"
-                    value={profile?.career || ""}
-                    onChange={(e) => updateProfile("career", e.target.value)}
+                    id="profession"
+                    value={profile?.profession || ""}
+                    onChange={(e) => updateProfile("profession", e.target.value)}
+                    placeholder="Ej: Desarrollador, Diseñador, Consultor, etc."
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="year">Año</Label>
-                  <Select
-                    value={profile?.year?.toString() || ""}
-                    onValueChange={(value) => updateProfile("year", parseInt(value))}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecciona año" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {[1, 2, 3, 4, 5].map((year) => (
-                        <SelectItem key={year} value={year.toString()}>
-                          {year}° año
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <Label htmlFor="experience_years">Años de Experiencia</Label>
+                  <Input
+                    id="experience_years"
+                    type="number"
+                    value={profile?.experience_years || ""}
+                    onChange={(e) => updateProfile("experience_years", parseInt(e.target.value) || null)}
+                    placeholder="Años de experiencia laboral"
+                  />
                 </div>
               </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Project Information */}
         <Card>

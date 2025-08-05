@@ -18,6 +18,7 @@ const Index = () => {
   const [selectedYear, setSelectedYear] = useState('all');
   const [selectedProjectSector, setSelectedProjectSector] = useState('all');
   const [selectedRegion, setSelectedRegion] = useState('all');
+  const [selectedUserType, setSelectedUserType] = useState('all');
   const [students, setStudents] = useState<Student[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -28,9 +29,7 @@ const Index = () => {
           .from('profiles')
           .select('*')
           .not('full_name', 'is', null)
-          .not('university', 'is', null)
-          .not('career', 'is', null)
-          .not('year', 'is', null)
+          .not('user_type', 'is', null)
           .not('gender', 'is', null)
           .not('entrepreneur_type', 'is', null)
           .not('team_status', 'is', null);
@@ -45,8 +44,8 @@ const Index = () => {
           name: profile.full_name || '',
           email: profile.email || '',
           institutionalEmail: profile.email || '',
-          degree: profile.career || '',
-          year: profile.year || 1,
+          degree: profile.user_type === 'universitario' ? (profile.career || '') : (profile.profession || ''),
+          year: profile.user_type === 'universitario' ? (profile.year || 1) : (profile.experience_years || 0),
           gender: profile.gender || '',
           type: profile.entrepreneur_type as 'Emprendedor/a' | 'Entusiasta',
           projectName: profile.project_name || undefined,
@@ -62,7 +61,8 @@ const Index = () => {
           linkedinUrl: undefined,
           university: profile.university || '',
           location: 'Santiago',
-          region: 'Metropolitana'
+          region: 'Metropolitana',
+          userType: (profile.user_type as 'universitario' | 'no_universitario') || 'universitario'
         })) || [];
 
         setStudents(transformedStudents);
@@ -88,8 +88,9 @@ const Index = () => {
     const matchesYear = selectedYear === 'all' || student.year.toString() === selectedYear;
     const matchesProjectSector = selectedProjectSector === 'all' || student.projectSector === selectedProjectSector;
     const matchesRegion = selectedRegion === 'all' || student.region === selectedRegion;
+    const matchesUserType = selectedUserType === 'all' || student.userType === selectedUserType;
     
-    return matchesSearch && matchesUniversity && matchesYear && matchesProjectSector && matchesRegion;
+    return matchesSearch && matchesUniversity && matchesYear && matchesProjectSector && matchesRegion && matchesUserType;
   });
 
   return (
@@ -156,6 +157,17 @@ const Index = () => {
                     Año {year}
                   </SelectItem>
                 ))}
+              </SelectContent>
+            </Select>
+            <Select onValueChange={setSelectedUserType} defaultValue="all">
+              <SelectTrigger className="w-full lg:w-[180px]">
+                <UsersIcon className="mr-2 h-4 w-4" />
+                <SelectValue placeholder="Tipo de usuario" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todos los usuarios</SelectItem>
+                <SelectItem value="universitario">Universitarios</SelectItem>
+                <SelectItem value="no_universitario">No Universitarios</SelectItem>
               </SelectContent>
             </Select>
             <Select onValueChange={setSelectedProjectSector} defaultValue="all">

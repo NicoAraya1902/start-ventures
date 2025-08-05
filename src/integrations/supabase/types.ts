@@ -81,10 +81,12 @@ export type Database = {
           created_at: string
           email: string | null
           entrepreneur_type: string | null
+          experience_years: number | null
           full_name: string | null
           gender: string | null
           id: string
           phone: string | null
+          profession: string | null
           project_description: string | null
           project_name: string | null
           project_sector: string | null
@@ -95,6 +97,7 @@ export type Database = {
           university: string | null
           updated_at: string
           user_id: string
+          user_type: string | null
           year: number | null
         }
         Insert: {
@@ -103,10 +106,12 @@ export type Database = {
           created_at?: string
           email?: string | null
           entrepreneur_type?: string | null
+          experience_years?: number | null
           full_name?: string | null
           gender?: string | null
           id?: string
           phone?: string | null
+          profession?: string | null
           project_description?: string | null
           project_name?: string | null
           project_sector?: string | null
@@ -117,6 +122,7 @@ export type Database = {
           university?: string | null
           updated_at?: string
           user_id: string
+          user_type?: string | null
           year?: number | null
         }
         Update: {
@@ -125,10 +131,12 @@ export type Database = {
           created_at?: string
           email?: string | null
           entrepreneur_type?: string | null
+          experience_years?: number | null
           full_name?: string | null
           gender?: string | null
           id?: string
           phone?: string | null
+          profession?: string | null
           project_description?: string | null
           project_name?: string | null
           project_sector?: string | null
@@ -139,6 +147,7 @@ export type Database = {
           university?: string | null
           updated_at?: string
           user_id?: string
+          user_type?: string | null
           year?: number | null
         }
         Relationships: []
