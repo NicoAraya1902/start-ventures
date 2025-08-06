@@ -5,9 +5,11 @@ import { ExternalLink } from "lucide-react";
 import { Student } from "@/data/students-data";
 import { ContactRequestDialog } from "@/components/messaging/ContactRequestDialog";
 import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 export function StudentCard({ student }: { student: Student }) {
   const { user } = useAuth();
+  const navigate = useNavigate();
   return (
     <Card className="h-full">
       <div className="p-6 space-y-4">
@@ -97,18 +99,14 @@ export function StudentCard({ student }: { student: Student }) {
               receiverName={student.name}
             />
           ) : (
-            // Usuario no autenticado: mostrar LinkedIn si existe
-            student.linkedinUrl && (
-              <Button 
-                size="sm" 
-                variant="outline" 
-                className="flex-1"
-                onClick={() => window.open(student.linkedinUrl, '_blank')}
-              >
-                <ExternalLink className="w-4 h-4 mr-1" />
-                LinkedIn
-              </Button>
-            )
+            <Button 
+              size="sm" 
+              variant="default" 
+              className="flex-1"
+              onClick={() => navigate('/auth')}
+            >
+              Iniciar sesión para contactar
+            </Button>
           )}
         </div>
       </div>

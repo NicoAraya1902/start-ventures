@@ -30,15 +30,27 @@ export function ProfileCheck({ children }: ProfileCheckProps) {
           .eq('user_id', user.id)
           .single();
 
-        // Check if profile is complete
-        const isComplete = profile && 
+        // Check if profile is complete based on user type
+        const commonFieldsComplete = profile && 
           profile.full_name &&
-          profile.university &&
-          profile.career &&
-          profile.year &&
           profile.gender &&
           profile.entrepreneur_type &&
           profile.team_status;
+
+        let typeSpecificFieldsComplete = false;
+        
+        if (profile?.user_type === 'universitario') {
+          // University students need: university, career, year
+          typeSpecificFieldsComplete = !!(profile.university && 
+            profile.career && 
+            profile.year);
+        } else if (profile?.user_type === 'no_universitario') {
+          // Non-university users need: profession, experience_years
+          typeSpecificFieldsComplete = !!(profile.profession && 
+            profile.experience_years);
+        }
+
+        const isComplete = commonFieldsComplete && typeSpecificFieldsComplete;
 
         if (!isComplete) {
           navigate('/profile');
