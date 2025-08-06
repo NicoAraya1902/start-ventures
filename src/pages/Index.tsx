@@ -18,7 +18,7 @@ const Index = () => {
   const [selectedYear, setSelectedYear] = useState('all');
   const [selectedProjectSector, setSelectedProjectSector] = useState('all');
   const [selectedRegion, setSelectedRegion] = useState('all');
-  const [selectedUserType, setSelectedUserType] = useState('all');
+  const [selectedUserType, setSelectedUserType] = useState('universitario');
   const [students, setStudents] = useState<Student[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -28,8 +28,8 @@ const Index = () => {
         const { data: profiles, error } = await supabase
           .from('profiles')
           .select('*')
+          .eq('user_type', 'universitario')
           .not('full_name', 'is', null)
-          .not('user_type', 'is', null)
           .not('gender', 'is', null)
           .not('entrepreneur_type', 'is', null)
           .not('team_status', 'is', null);
@@ -157,17 +157,6 @@ const Index = () => {
                     Año {year}
                   </SelectItem>
                 ))}
-              </SelectContent>
-            </Select>
-            <Select onValueChange={setSelectedUserType} defaultValue="all">
-              <SelectTrigger className="w-full lg:w-[180px]">
-                <UsersIcon className="mr-2 h-4 w-4" />
-                <SelectValue placeholder="Tipo de usuario" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Todos los usuarios</SelectItem>
-                <SelectItem value="universitario">Universitarios</SelectItem>
-                <SelectItem value="no_universitario">No Universitarios</SelectItem>
               </SelectContent>
             </Select>
             <Select onValueChange={setSelectedProjectSector} defaultValue="all">
