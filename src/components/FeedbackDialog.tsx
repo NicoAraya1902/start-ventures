@@ -68,33 +68,24 @@ export function FeedbackDialog({ children }: FeedbackDialogProps) {
     setIsSubmitting(true);
     
     try {
-      const payload = {
+      // Create URL with query parameters for GET request
+      const baseUrl = "https://n8n.srv928892.hstgr.cloud/webhook-test/55107802-e7cf-461a-8e3b-c30a67f0cb91";
+      const params = new URLSearchParams({
         type: data.type,
         description: data.description,
-        contactEmail: data.email || null,
-        userInfo: {
-          userId: user?.id || null,
-          userName: user?.user_metadata?.full_name || null,
-          userEmail: user?.email || null,
-        },
-        contextInfo: {
-          currentUrl: window.location.href,
-          userAgent: navigator.userAgent,
-          timestamp: new Date().toISOString(),
-          screenResolution: `${screen.width}x${screen.height}`,
-        },
-      };
+        contactEmail: data.email || "",
+        userId: user?.id || "",
+        userName: user?.user_metadata?.full_name || "",
+        userEmail: user?.email || "",
+        currentUrl: window.location.href,
+        userAgent: navigator.userAgent,
+        timestamp: new Date().toISOString(),
+        screenResolution: `${screen.width}x${screen.height}`,
+      });
 
-      const response = await fetch(
-        "https://n8n.srv928892.hstgr.cloud/webhook-test/55107802-e7cf-461a-8e3b-c30a67f0cb91",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(payload),
-        }
-      );
+      const response = await fetch(`${baseUrl}?${params.toString()}`, {
+        method: "GET",
+      });
 
       if (!response.ok) {
         throw new Error("Error al enviar el feedback");
