@@ -2,11 +2,12 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Menu } from 'lucide-react';
+import { Menu, MessageSquare } from 'lucide-react';
 import { useAuth } from "@/contexts/AuthContext";
 import { LoginButton } from "@/components/auth/LoginButton";
 import { UserMenu } from "@/components/auth/UserMenu";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { FeedbackDialog } from "@/components/FeedbackDialog";
 
 const Header = () => {
   const { user } = useAuth();
@@ -38,6 +39,17 @@ const Header = () => {
         </nav>
 
         <div className="flex items-center gap-3">
+          <FeedbackDialog>
+            <Button 
+              variant="ghost" 
+              size="sm"
+              className="hidden md:flex items-center gap-2"
+            >
+              <MessageSquare className="h-4 w-4" />
+              Feedback
+            </Button>
+          </FeedbackDialog>
+          
           {user ? (
             <UserMenu />
           ) : (
@@ -55,6 +67,16 @@ const Header = () => {
                 <Link to="/" className="text-lg font-medium">Inicio</Link>
                 
                 <Link to="/news" className="text-lg font-medium">Noticias</Link>
+                
+                <FeedbackDialog>
+                  <Button 
+                    variant="ghost" 
+                    className="w-full justify-start text-lg font-medium"
+                  >
+                    <MessageSquare className="mr-2 h-4 w-4" />
+                    Feedback
+                  </Button>
+                </FeedbackDialog>
                 
                 {user ? (
                   <>
