@@ -22,23 +22,73 @@ export function ContactRequestDialog({ receiverId, receiverName }: ContactReques
     setLoading(true);
     
     try {
+      // Get current user
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      
+      if (userError || !user) {
+        toast({
+          variant: "destructive",
+          title: "Error de autenticación",
+          description: "Debes estar conectado para enviar solicitudes",
+        });
+        return;
+      }
+
+      // Verify receiver exists and is universitario
+      const { data: receiverProfile, error: profileError } = await supabase
+        .from('profiles')
+        .select('user_type')
+        .eq('user_id', receiverId)
+        .single();
+
+      if (profileError || !receiverProfile) {
+        toast({
+          variant: "destructive",
+          title: "Usuario no encontrado",
+          description: "No se pudo encontrar el perfil del usuario",
+        });
+        return;
+      }
+
+      if (receiverProfile.user_type !== 'universitario') {
+        toast({
+          variant: "destructive",
+          title: "Solicitud no permitida",
+          description: "Solo puedes enviar solicitudes a estudiantes universitarios",
+        });
+        return;
+      }
+
+      // Insert contact request
       const { error } = await supabase
         .from('contact_requests')
         .insert({
           receiver_id: receiverId,
           message: message || `Hola ${receiverName}, me gustaría conectar contigo para explorar oportunidades de colaboración.`,
-          sender_id: (await supabase.auth.getUser()).data.user?.id
+          sender_id: user.id
         });
 
       if (error) {
+        console.error('Contact request error:', error);
+        
         if (error.code === '23505') {
           toast({
             variant: "destructive",
             title: "Solicitud ya enviada",
             description: "Ya has enviado una solicitud a esta persona",
           });
+        } else if (error.message?.includes('row-level security')) {
+          toast({
+            variant: "destructive",
+            title: "Solicitud no permitida",
+            description: "No tienes permisos para enviar esta solicitud",
+          });
         } else {
-          throw error;
+          toast({
+            variant: "destructive",
+            title: "Error al enviar solicitud",
+            description: error.message || "No se pudo enviar la solicitud de contacto",
+          });
         }
       } else {
         toast({
@@ -49,10 +99,11 @@ export function ContactRequestDialog({ receiverId, receiverName }: ContactReques
         setMessage("");
       }
     } catch (error) {
+      console.error('Unexpected error:', error);
       toast({
         variant: "destructive",
-        title: "Error",
-        description: "No se pudo enviar la solicitud de contacto",
+        title: "Error inesperado",
+        description: "Ocurrió un error inesperado al enviar la solicitud",
       });
     } finally {
       setLoading(false);
