@@ -11,11 +11,6 @@ import { useToast } from "@/hooks/use-toast";
 import { LogIn, UserPlus, Mail } from "lucide-react";
 import { Navigate } from "react-router-dom";
 
-const UNIVERSITY_DOMAINS = [
-  'uc.cl', 'uchile.cl', 'usach.cl', 'uv.cl', 'udec.cl', 'puc.cl',
-  'uai.cl', 'udd.cl', 'unab.cl', 'udp.cl', 'usm.cl', 'utfsm.cl',
-  'uach.cl', 'ufro.cl', 'ucn.cl', 'uct.cl', 'ubo.cl', 'utem.cl'
-];
 
 export default function Auth() {
   const { user, signInWithGoogle } = useAuth();
@@ -31,25 +26,10 @@ export default function Auth() {
     return <Navigate to="/" replace />;
   }
 
-  const isUniversityEmail = (email: string) => {
-    const domain = email.split('@')[1];
-    // Check exact domain or if it ends with any university domain
-    return UNIVERSITY_DOMAINS.some(universityDomain => 
-      domain === universityDomain || domain.endsWith('.' + universityDomain)
-    );
-  };
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!isUniversityEmail(email)) {
-      toast({
-        variant: "destructive",
-        title: "Email no válido",
-        description: "Debes usar un correo universitario chileno (.cl)",
-      });
-      return;
-    }
 
     if (password !== confirmPassword) {
       toast({
@@ -167,7 +147,7 @@ export default function Auth() {
             </div>
             <div className="relative flex justify-center text-xs uppercase">
               <span className="bg-background px-2 text-muted-foreground">
-                O con tu email universitario
+                O con tu email
               </span>
             </div>
           </div>
@@ -192,18 +172,15 @@ export default function Auth() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email universitario</Label>
+                  <Label htmlFor="email">Email</Label>
                   <Input
                     id="email"
                     type="email"
-                    placeholder="tu@universidad.cl"
+                    placeholder="tu@email.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
                   />
-                  <p className="text-xs text-muted-foreground">
-                    Solo correos de universidades chilenas
-                  </p>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="password">Contraseña</Label>
@@ -241,7 +218,7 @@ export default function Auth() {
                   <Input
                     id="signin-email"
                     type="email"
-                    placeholder="tu@universidad.cl"
+                    placeholder="tu@email.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
