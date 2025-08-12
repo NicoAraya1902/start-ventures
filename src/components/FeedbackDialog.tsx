@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { supabase } from "@/integrations/supabase/client";
 import { 
   Dialog, 
   DialogContent, 
@@ -68,27 +69,19 @@ export function FeedbackDialog({ children }: FeedbackDialogProps) {
     setIsSubmitting(true);
     
     try {
-      // Create URL with query parameters for GET request
-      const baseUrl = "https://n8n.srv928892.hstgr.cloud/webhook/55107802-e7cf-461a-8e3b-c30a67f0cb91";
-      const params = new URLSearchParams({
-        type: data.type,
-        description: data.description,
-        contactEmail: data.email || "",
-        userId: user?.id || "",
-        userName: user?.user_metadata?.full_name || "",
-        userEmail: user?.email || "",
-        currentUrl: window.location.href,
-        userAgent: navigator.userAgent,
-        timestamp: new Date().toISOString(),
-        screenResolution: `${screen.width}x${screen.height}`,
+      // Use the secure edge function instead of direct webhook
+      const { data: result, error } = await supabase.functions.invoke('send-feedback', {
+        body: {
+          type: data.type,
+          description: data.description,
+          email: data.email || "",
+          userId: user?.id || "",
+          userName: user?.user_metadata?.full_name || "",
+        }
       });
 
-      const response = await fetch(`${baseUrl}?${params.toString()}`, {
-        method: "GET",
-      });
-
-      if (!response.ok) {
-        throw new Error("Error al enviar el feedback");
+      if (error) {
+        throw new Error(error.message || 'Failed to send feedback');
       }
 
       toast({

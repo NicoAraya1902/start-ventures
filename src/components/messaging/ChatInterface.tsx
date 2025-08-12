@@ -10,6 +10,7 @@ import { Send, MessageCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
+import { sanitizeUserInput, sanitizeText } from "@/lib/sanitizer";
 
 interface Message {
   id: string;
@@ -155,12 +156,15 @@ export function ChatInterface({ contactId, contactName, onClose }: ChatInterface
   const sendMessage = async () => {
     if (!user || !newMessage.trim() || !contactId) return;
 
-    console.log('Sending message:', newMessage.trim(), 'from', user.id, 'to', contactId);
+    // Sanitize message content before sending
+    const sanitizedContent = sanitizeText(newMessage.trim(), 2000);
+    
+    console.log('Sending message:', sanitizedContent, 'from', user.id, 'to', contactId);
     setSending(true);
     
     try {
       const messageData = {
-        content: newMessage.trim(),
+        content: sanitizedContent,
         sender_id: user.id,
         receiver_id: contactId,
         subject: "Chat message"
@@ -264,7 +268,7 @@ export function ChatInterface({ contactId, contactName, onClose }: ChatInterface
                           : 'bg-muted'
                       }`}
                     >
-                      <p className="whitespace-pre-wrap break-words">{message.content}</p>
+                      <p className="whitespace-pre-wrap break-words">{sanitizeUserInput(message.content)}</p>
                       <p className={`text-xs mt-1 ${
                         isOwnMessage ? 'text-primary-foreground/70' : 'text-muted-foreground'
                       }`}>

@@ -15,6 +15,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { User, Save, Mail, Phone, Upload, Camera, Code, Briefcase, Heart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { UNIVERSITIES_CHILE, REGIONS_CHILE } from "@/data/chile-data";
+import { sanitizeText, sanitizeEmail, sanitizePhone } from "@/lib/sanitizer";
 
 interface Profile {
   id: string;
@@ -213,35 +214,38 @@ export default function Profile() {
     setSaving(true);
 
     try {
+      // Sanitize all text inputs before saving
+      const sanitizedProfile = {
+        full_name: profile.full_name ? sanitizeText(profile.full_name, 100) : null,
+        phone: profile.phone ? sanitizePhone(profile.phone) : null,
+        user_type: profile.user_type,
+        university: profile.university ? sanitizeText(profile.university, 255) : null,
+        career: profile.career ? sanitizeText(profile.career, 255) : null,
+        year: profile.year,
+        profession: profile.profession ? sanitizeText(profile.profession, 255) : null,
+        experience_years: profile.experience_years,
+        gender: profile.gender,
+        entrepreneur_type: profile.entrepreneur_type,
+        project_name: profile.project_name ? sanitizeText(profile.project_name, 255) : null,
+        project_description: profile.project_description ? sanitizeText(profile.project_description, 2000) : null,
+        project_sector: profile.project_sector ? sanitizeText(profile.project_sector, 255) : null,
+        project_stage: profile.project_stage,
+        team_status: profile.team_status,
+        team_size: profile.team_size,
+        support_areas: profile.support_areas,
+        is_technical: profile.is_technical,
+        seeking_technical: profile.seeking_technical,
+        technical_skills: profile.technical_skills,
+        non_technical_skills: profile.non_technical_skills,
+        seeking_technical_skills: profile.seeking_technical_skills,
+        seeking_non_technical_skills: profile.seeking_non_technical_skills,
+        hobbies: profile.hobbies,
+        interests: profile.interests,
+      };
+
       const { error } = await supabase
         .from("profiles")
-        .update({
-          full_name: profile.full_name,
-          phone: profile.phone,
-          user_type: profile.user_type,
-          university: profile.university,
-          career: profile.career,
-          year: profile.year,
-          profession: profile.profession,
-          experience_years: profile.experience_years,
-          gender: profile.gender,
-          entrepreneur_type: profile.entrepreneur_type,
-          project_name: profile.project_name,
-          project_description: profile.project_description,
-          project_sector: profile.project_sector,
-          project_stage: profile.project_stage,
-          team_status: profile.team_status,
-          team_size: profile.team_size,
-          support_areas: profile.support_areas,
-          is_technical: profile.is_technical,
-          seeking_technical: profile.seeking_technical,
-          technical_skills: profile.technical_skills,
-          non_technical_skills: profile.non_technical_skills,
-          seeking_technical_skills: profile.seeking_technical_skills,
-          seeking_non_technical_skills: profile.seeking_non_technical_skills,
-          hobbies: profile.hobbies,
-          interests: profile.interests,
-        })
+        .update(sanitizedProfile)
         .eq("user_id", user.id);
 
       if (error) throw error;
