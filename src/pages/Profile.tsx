@@ -14,6 +14,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { User, Save, Mail, Phone, Upload, Camera, Code, Briefcase, Heart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { UNIVERSITIES_CHILE, REGIONS_CHILE } from "@/data/chile-data";
 
 interface Profile {
   id: string;
@@ -437,12 +438,21 @@ export default function Profile() {
               <div className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="university">Universidad/Institución</Label>
-                  <Input
-                    id="university"
+                  <Select
                     value={profile?.university || ""}
-                    onChange={(e) => updateProfile("university", e.target.value)}
-                    placeholder="Ej: Universidad de Chile, DUOC UC, etc."
-                  />
+                    onValueChange={(value) => updateProfile("university", value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecciona tu universidad" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {UNIVERSITIES_CHILE.map((university) => (
+                        <SelectItem key={university} value={university}>
+                          {university}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">

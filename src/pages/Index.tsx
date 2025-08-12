@@ -11,6 +11,7 @@ import {
 import StudentCard from '@/components/StudentCard';
 import { supabase } from '@/integrations/supabase/client';
 import type { Student } from '@/data/students-data';
+import { UNIVERSITIES_CHILE, REGIONS_CHILE } from '@/data/chile-data';
 
 const Index = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -70,8 +71,8 @@ const Index = () => {
           phone: profile.phone || undefined,
           linkedinUrl: undefined,
           university: profile.university || '',
-          location: 'Santiago',
-          region: 'Metropolitana',
+          location: profile.location || 'Santiago', // Default location
+          region: profile.region || 'Región Metropolitana de Santiago', // Default region
           userType: (profile.user_type as 'universitario' | 'no_universitario') || 'universitario',
           isTechnical: profile.is_technical || undefined,
           seekingTechnical: profile.seeking_technical || undefined,
@@ -94,10 +95,11 @@ const Index = () => {
     fetchProfiles();
   }, []);
 
-  const universities = ['all', ...Array.from(new Set(students.map(s => s.university)))];
+  // Use predefined lists for filters
+  const universities = ['all', ...UNIVERSITIES_CHILE];
   const years = ['all', ...Array.from(new Set(students.map(s => s.year.toString())))];
   const projectSectors = ['all', ...Array.from(new Set(students.map(s => s.projectSector).filter(Boolean)))];
-  const regions = ['all', ...Array.from(new Set(students.map(s => s.region)))];
+  const regions = ['all', ...REGIONS_CHILE];
 
   const filteredStudents = students.filter(student => {
     const searchContent = `${student.name} ${student.projectDescription || ''} ${student.projectSector || ''} ${student.supportAreas.join(' ')}`.toLowerCase();
