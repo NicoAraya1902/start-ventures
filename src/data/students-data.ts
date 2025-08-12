@@ -28,6 +28,8 @@ export interface Student {
   nonTechnicalSkills?: string[];
   seekingTechnicalSkills?: string[];
   seekingNonTechnicalSkills?: string[];
+  hobbies?: string[];
+  interests?: string[];
 }
 
 export const students: Student[] = [

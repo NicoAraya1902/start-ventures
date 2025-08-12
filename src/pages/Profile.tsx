@@ -12,7 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { User, Save, Mail, Phone, Upload, Camera, Code, Briefcase } from "lucide-react";
+import { User, Save, Mail, Phone, Upload, Camera, Code, Briefcase, Heart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface Profile {
@@ -43,6 +43,8 @@ interface Profile {
   non_technical_skills: string[] | null;
   seeking_technical_skills: string[] | null;
   seeking_non_technical_skills: string[] | null;
+  hobbies: string[] | null;
+  interests: string[] | null;
 }
 
 export default function Profile() {
@@ -236,6 +238,8 @@ export default function Profile() {
           non_technical_skills: profile.non_technical_skills,
           seeking_technical_skills: profile.seeking_technical_skills,
           seeking_non_technical_skills: profile.seeking_non_technical_skills,
+          hobbies: profile.hobbies,
+          interests: profile.interests,
         })
         .eq("user_id", user.id);
 
@@ -856,6 +860,110 @@ export default function Profile() {
             </CardContent>
           </Card>
         )}
+
+        {/* Hobbies and Interests */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Heart className="h-5 w-5" />
+              Pasatiempos e Intereses
+            </CardTitle>
+            <CardDescription>
+              Comparte tus pasatiempos e intereses para conectar mejor con otros emprendedores
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            {/* Hobbies */}
+            <div className="space-y-3">
+              <Label className="text-base font-medium">Pasatiempos</Label>
+              <p className="text-sm text-muted-foreground">
+                ¿Qué te gusta hacer en tu tiempo libre?
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                {[
+                  "Videojuegos",
+                  "Lectura",
+                  "Deportes",
+                  "Música",
+                  "Cocina",
+                  "Viajes",
+                  "Fotografía",
+                  "Arte",
+                  "Cine",
+                  "Baile",
+                  "Jardinería",
+                  "Escritura",
+                  "Manualidades",
+                  "Yoga",
+                  "Senderismo"
+                ].map((hobby) => (
+                  <div key={hobby} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={hobby}
+                      checked={profile?.hobbies?.includes(hobby) || false}
+                      onCheckedChange={(checked) => {
+                        const currentHobbies = profile?.hobbies || [];
+                        if (checked) {
+                          updateProfile("hobbies", [...currentHobbies, hobby]);
+                        } else {
+                          updateProfile("hobbies", currentHobbies.filter(h => h !== hobby));
+                        }
+                      }}
+                    />
+                    <Label htmlFor={hobby} className="text-sm">
+                      {hobby}
+                    </Label>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Interests */}
+            <div className="space-y-3">
+              <Label className="text-base font-medium">Intereses</Label>
+              <p className="text-sm text-muted-foreground">
+                ¿Qué temas te interesan o te motivan?
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                {[
+                  "Tecnología",
+                  "Emprendimiento",
+                  "Sostenibilidad",
+                  "Innovación",
+                  "Educación",
+                  "Salud",
+                  "Finanzas",
+                  "Marketing",
+                  "Ciencia",
+                  "Política",
+                  "Cultura",
+                  "Historia",
+                  "Psicología",
+                  "Filosofía",
+                  "Medio ambiente"
+                ].map((interest) => (
+                  <div key={interest} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={interest}
+                      checked={profile?.interests?.includes(interest) || false}
+                      onCheckedChange={(checked) => {
+                        const currentInterests = profile?.interests || [];
+                        if (checked) {
+                          updateProfile("interests", [...currentInterests, interest]);
+                        } else {
+                          updateProfile("interests", currentInterests.filter(i => i !== interest));
+                        }
+                      }}
+                    />
+                    <Label htmlFor={interest} className="text-sm">
+                      {interest}
+                    </Label>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Save Button */}
         <div className="flex justify-end">

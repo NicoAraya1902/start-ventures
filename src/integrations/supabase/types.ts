@@ -84,7 +84,9 @@ export type Database = {
           experience_years: number | null
           full_name: string | null
           gender: string | null
+          hobbies: string[] | null
           id: string
+          interests: string[] | null
           is_technical: boolean | null
           non_technical_skills: string[] | null
           phone: string | null
@@ -115,7 +117,9 @@ export type Database = {
           experience_years?: number | null
           full_name?: string | null
           gender?: string | null
+          hobbies?: string[] | null
           id?: string
+          interests?: string[] | null
           is_technical?: boolean | null
           non_technical_skills?: string[] | null
           phone?: string | null
@@ -146,7 +150,9 @@ export type Database = {
           experience_years?: number | null
           full_name?: string | null
           gender?: string | null
+          hobbies?: string[] | null
           id?: string
+          interests?: string[] | null
           is_technical?: boolean | null
           non_technical_skills?: string[] | null
           phone?: string | null

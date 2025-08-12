@@ -68,7 +68,9 @@ const Index = () => {
           technicalSkills: profile.technical_skills || undefined,
           nonTechnicalSkills: profile.non_technical_skills || undefined,
           seekingTechnicalSkills: profile.seeking_technical_skills || undefined,
-          seekingNonTechnicalSkills: profile.seeking_non_technical_skills || undefined
+          seekingNonTechnicalSkills: profile.seeking_non_technical_skills || undefined,
+          hobbies: profile.hobbies || undefined,
+          interests: profile.interests || undefined
         })) || [];
 
         setStudents(transformedStudents);

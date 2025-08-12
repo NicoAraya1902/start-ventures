@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { ExternalLink, Code, Briefcase, Search } from "lucide-react";
 import { Student } from "@/data/students-data";
 import { ContactRequestDialog } from "@/components/messaging/ContactRequestDialog";
+import { ProfileDetailDialog } from "@/components/ProfileDetailDialog";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 
@@ -11,8 +12,9 @@ export function StudentCard({ student }: { student: Student }) {
   const { user } = useAuth();
   const navigate = useNavigate();
   return (
-    <Card className="h-full">
-      <div className="p-6 space-y-4">
+    <ProfileDetailDialog student={student}>
+      <Card className="h-full cursor-pointer hover:shadow-lg transition-shadow duration-200">
+        <div className="p-6 space-y-4">
         <div className="flex items-start gap-4">
           <img
             src={student.profileImageUrl}
@@ -135,16 +137,21 @@ export function StudentCard({ student }: { student: Student }) {
 
         <div className="flex gap-2 pt-2">
           {user ? (
-            <ContactRequestDialog 
-              receiverId={student.id} 
-              receiverName={student.name}
-            />
+            <div onClick={(e) => e.stopPropagation()}>
+              <ContactRequestDialog 
+                receiverId={student.id} 
+                receiverName={student.name}
+              />
+            </div>
           ) : (
             <Button 
               size="sm" 
               variant="default" 
               className="flex-1"
-              onClick={() => navigate('/auth')}
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate('/auth');
+              }}
             >
               Iniciar sesión para contactar
             </Button>
@@ -152,6 +159,7 @@ export function StudentCard({ student }: { student: Student }) {
         </div>
       </div>
     </Card>
+    </ProfileDetailDialog>
   );
 }
 
