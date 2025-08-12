@@ -39,35 +39,66 @@ export function ChatInterface({ contactId, contactName, onClose }: ChatInterface
   useEffect(() => {
     if (!user || !contactId) return;
     
+    console.log('ChatInterface: Setting up for user', user.id, 'and contact', contactId);
     fetchMessages();
     
-    // Set up real-time subscription
+    // Set up real-time subscription with better filtering
     const channel = supabase
-      .channel('chat-messages')
+      .channel(`chat-${user.id}-${contactId}`)
       .on(
         'postgres_changes',
         {
-          event: '*',
+          event: 'INSERT',
           schema: 'public',
-          table: 'messages',
-          filter: `or(and(sender_id.eq.${user.id},receiver_id.eq.${contactId}),and(sender_id.eq.${contactId},receiver_id.eq.${user.id}))`
+          table: 'messages'
         },
         (payload) => {
-          if (payload.eventType === 'INSERT') {
-            setMessages(prev => [...prev, payload.new as Message]);
+          console.log('Real-time INSERT received:', payload);
+          const newMessage = payload.new as Message;
+          
+          // Only add messages relevant to this conversation
+          if ((newMessage.sender_id === user.id && newMessage.receiver_id === contactId) ||
+              (newMessage.sender_id === contactId && newMessage.receiver_id === user.id)) {
+            console.log('Adding new message to conversation:', newMessage);
+            setMessages(prev => {
+              // Avoid duplicates
+              if (prev.find(msg => msg.id === newMessage.id)) {
+                return prev;
+              }
+              return [...prev, newMessage];
+            });
             scrollToBottom();
-          } else if (payload.eventType === 'UPDATE') {
+          }
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'messages'
+        },
+        (payload) => {
+          console.log('Real-time UPDATE received:', payload);
+          const updatedMessage = payload.new as Message;
+          
+          // Only update messages relevant to this conversation
+          if ((updatedMessage.sender_id === user.id && updatedMessage.receiver_id === contactId) ||
+              (updatedMessage.sender_id === contactId && updatedMessage.receiver_id === user.id)) {
             setMessages(prev => 
               prev.map(msg => 
-                msg.id === payload.new.id ? payload.new as Message : msg
+                msg.id === updatedMessage.id ? updatedMessage : msg
               )
             );
           }
         }
       )
-      .subscribe();
+      .subscribe((status) => {
+        console.log('Chat subscription status:', status);
+      });
 
     return () => {
+      console.log('Cleaning up chat subscription');
       supabase.removeChannel(channel);
     };
   }, [user, contactId]);
@@ -83,6 +114,8 @@ export function ChatInterface({ contactId, contactName, onClose }: ChatInterface
   const fetchMessages = async () => {
     if (!user || !contactId) return;
 
+    console.log('Fetching messages for conversation:', user.id, '<->', contactId);
+    
     try {
       const { data, error } = await supabase
         .from("messages")
@@ -92,6 +125,7 @@ export function ChatInterface({ contactId, contactName, onClose }: ChatInterface
 
       if (error) throw error;
 
+      console.log('Fetched messages:', data?.length || 0, 'messages');
       setMessages(data || []);
       
       // Mark received messages as read
@@ -100,6 +134,7 @@ export function ChatInterface({ contactId, contactName, onClose }: ChatInterface
       ) || [];
 
       if (unreadMessages.length > 0) {
+        console.log('Marking', unreadMessages.length, 'messages as read');
         await supabase
           .from("messages")
           .update({ read: true })
@@ -120,20 +155,36 @@ export function ChatInterface({ contactId, contactName, onClose }: ChatInterface
   const sendMessage = async () => {
     if (!user || !newMessage.trim() || !contactId) return;
 
+    console.log('Sending message:', newMessage.trim(), 'from', user.id, 'to', contactId);
     setSending(true);
+    
     try {
-      const { error } = await supabase
+      const messageData = {
+        content: newMessage.trim(),
+        sender_id: user.id,
+        receiver_id: contactId,
+        subject: "Chat message"
+      };
+      
+      const { data, error } = await supabase
         .from("messages")
-        .insert({
-          content: newMessage.trim(),
-          sender_id: user.id,
-          receiver_id: contactId,
-          subject: "Chat message"
-        });
+        .insert(messageData)
+        .select()
+        .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error("Supabase error:", error);
+        throw error;
+      }
 
+      console.log('Message sent successfully:', data);
       setNewMessage("");
+      
+      // Force refresh messages after sending (fallback if real-time doesn't work)
+      setTimeout(() => {
+        fetchMessages();
+      }, 500);
+      
     } catch (error) {
       console.error("Error sending message:", error);
       toast({
