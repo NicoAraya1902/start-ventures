@@ -69,7 +69,7 @@ export function FeedbackDialog({ children }: FeedbackDialogProps) {
     
     try {
       // Create URL with query parameters for GET request
-      const baseUrl = "https://n8n.srv928892.hstgr.cloud/webhook-test/55107802-e7cf-461a-8e3b-c30a67f0cb91";
+      const baseUrl = "https://n8n.srv928892.hstgr.cloud/webhook/55107802-e7cf-461a-8e3b-c30a67f0cb91";
       const params = new URLSearchParams({
         type: data.type,
         description: data.description,
