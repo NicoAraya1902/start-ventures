@@ -1,5 +1,5 @@
 export interface Student {
-  id: string;
+  id: string;  // This will now be the user_id from Supabase profiles
   name: string;
   email: string;
   institutionalEmail: string;

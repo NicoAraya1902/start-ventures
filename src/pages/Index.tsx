@@ -40,7 +40,7 @@ const Index = () => {
         }
 
         const transformedStudents: Student[] = profiles?.map(profile => ({
-          id: profile.id,
+          id: profile.user_id,  // Use user_id instead of profile.id
           name: profile.full_name || '',
           email: profile.email || '',
           institutionalEmail: profile.email || '',
