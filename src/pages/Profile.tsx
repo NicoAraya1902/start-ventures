@@ -132,7 +132,7 @@ export default function Profile() {
           user_id: user.id,
           full_name: user.user_metadata?.full_name || "",
           email: user.email || "",
-          avatar_url: user.user_metadata?.avatar_url || "",
+          avatar_url: user.user_metadata?.avatar_url || null,
           team_status: 'buscando', // Default to actively searching
           user_type: 'universitario' as const, // Default to university user
         };

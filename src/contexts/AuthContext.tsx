@@ -7,7 +7,6 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
-  signInWithGoogle: () => Promise<void>;
   signInWithEmail: (email: string, password: string) => Promise<{ error: any }>;
   signUpWithEmail: (email: string, password: string, fullName: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
@@ -59,32 +58,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
     return () => subscription.unsubscribe();
   }, [toast]);
 
-  const signInWithGoogle = async () => {
-    try {
-      const redirectUrl = `${window.location.origin}/`;
-      
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: redirectUrl,
-        },
-      });
-
-      if (error) {
-        toast({
-          variant: "destructive",
-          title: "Error de autenticación",
-          description: error.message,
-        });
-      }
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Error inesperado al iniciar sesión",
-      });
-    }
-  };
 
   const signInWithEmail = async (email: string, password: string) => {
     try {
@@ -144,7 +117,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
     user,
     session,
     loading,
-    signInWithGoogle,
     signInWithEmail,
     signUpWithEmail,
     signOut,

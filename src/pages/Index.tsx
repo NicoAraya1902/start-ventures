@@ -55,7 +55,7 @@ const Index = () => {
           teamStatus: profile.team_status === 'buscando' ? 'Solo/a' : 'En equipo',
           teamSize: profile.team_size || undefined,
           supportAreas: profile.support_areas || [],
-          profileImageUrl: profile.avatar_url || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
+          profileImageUrl: profile.avatar_url || undefined,
           hasIdea: !!profile.project_name,
           phone: profile.phone || undefined,
           linkedinUrl: undefined,

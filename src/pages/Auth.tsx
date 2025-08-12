@@ -13,7 +13,7 @@ import { Navigate } from "react-router-dom";
 
 
 export default function Auth() {
-  const { user, signInWithGoogle } = useAuth();
+  const { user } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -131,26 +131,6 @@ export default function Auth() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-          <Button
-            onClick={signInWithGoogle}
-            disabled={loading}
-            variant="outline"
-            className="w-full gap-2"
-          >
-            <LogIn className="h-4 w-4" />
-            Continuar con Google
-          </Button>
-
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <Separator className="w-full" />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-2 text-muted-foreground">
-                O con tu email
-              </span>
-            </div>
-          </div>
 
           <Tabs defaultValue="signup" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
