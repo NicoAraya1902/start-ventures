@@ -38,7 +38,7 @@ interface Profile {
   team_size: number | null;
   support_areas: string[] | null;
   is_technical: boolean | null;
-  seeking_technical: boolean | null;
+  seeking_technical: string | null;
   technical_skills: string[] | null;
   non_technical_skills: string[] | null;
   seeking_technical_skills: string[] | null;
@@ -79,11 +79,11 @@ export default function Profile() {
       : Boolean(profile.non_technical_skills && profile.non_technical_skills.length > 0);
 
     // Check if seeking skills are filled when seeking_technical is defined
-    const seekingSkillsComplete = profile.seeking_technical !== null 
-      ? profile.seeking_technical
-        ? Boolean(profile.seeking_technical_skills && profile.seeking_technical_skills.length > 0)
-        : Boolean(profile.seeking_non_technical_skills && profile.seeking_non_technical_skills.length > 0)
-      : true;
+    const seekingSkillsComplete = profile.seeking_technical === "technical" 
+      ? Boolean(profile.seeking_technical_skills && profile.seeking_technical_skills.length > 0)
+      : profile.seeking_technical === "non_technical"
+        ? Boolean(profile.seeking_non_technical_skills && profile.seeking_non_technical_skills.length > 0)
+        : true;
 
     if (profile.user_type === 'universitario') {
       return baseFields && skillsComplete && seekingSkillsComplete && Boolean(
@@ -640,25 +640,29 @@ export default function Profile() {
 
               {/* Seeking Technical */}
               <div className="space-y-3">
-                <Label className="text-base font-medium">¿Buscas un perfil técnico en tu equipo?</Label>
+                <Label className="text-base font-medium">¿Qué tipo de colaborador buscas?</Label>
                 <RadioGroup
-                  value={profile?.seeking_technical === null ? "" : profile?.seeking_technical ? "yes" : "no"}
-                  onValueChange={(value) => updateProfile("seeking_technical", value === "yes")}
-                  className="flex gap-6"
+                  value={profile?.seeking_technical || ""}
+                  onValueChange={(value) => updateProfile("seeking_technical", value)}
+                  className="space-y-2"
                 >
                   <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="yes" id="seeking-yes" />
-                    <Label htmlFor="seeking-yes">Sí, busco perfil técnico</Label>
+                    <RadioGroupItem value="technical" id="seeking-technical" />
+                    <Label htmlFor="seeking-technical">Busco un perfil técnico</Label>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="no" id="seeking-no" />
-                    <Label htmlFor="seeking-no">No, busco perfil no técnico</Label>
+                    <RadioGroupItem value="non_technical" id="seeking-non-technical" />
+                    <Label htmlFor="seeking-non-technical">Busco un perfil no técnico</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="none" id="seeking-none" />
+                    <Label htmlFor="seeking-none">No busco colaboradores actualmente</Label>
                   </div>
                 </RadioGroup>
               </div>
 
               {/* Seeking Skills */}
-              {profile?.seeking_technical !== null && (
+              {(profile?.seeking_technical === "technical" || profile?.seeking_technical === "non_technical") && (
                 <div className="space-y-3">
                   <Label className="text-base font-medium">
                     Habilidades que busco en mi equipo (máximo 3)
@@ -667,7 +671,7 @@ export default function Profile() {
                     Selecciona 2-3 habilidades que más necesitas en tu equipo
                   </p>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                    {profile.seeking_technical ? (
+                    {profile.seeking_technical === "technical" ? (
                       // Technical Skills they're seeking
                       [
                         "Desarrollo web y móvil (MVP rápido)",

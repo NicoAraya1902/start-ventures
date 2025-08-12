@@ -23,7 +23,7 @@ export interface Student {
   region: string;
   userType?: 'universitario' | 'no_universitario';
   isTechnical?: boolean;
-  seekingTechnical?: boolean;
+  seekingTechnical?: string;
   technicalSkills?: string[];
   nonTechnicalSkills?: string[];
   seekingTechnicalSkills?: string[];

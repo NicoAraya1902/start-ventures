@@ -94,7 +94,7 @@ export type Database = {
           project_sector: string | null
           project_stage: string | null
           seeking_non_technical_skills: string[] | null
-          seeking_technical: boolean | null
+          seeking_technical: string | null
           seeking_technical_skills: string[] | null
           support_areas: string[] | null
           team_size: number | null
@@ -125,7 +125,7 @@ export type Database = {
           project_sector?: string | null
           project_stage?: string | null
           seeking_non_technical_skills?: string[] | null
-          seeking_technical?: boolean | null
+          seeking_technical?: string | null
           seeking_technical_skills?: string[] | null
           support_areas?: string[] | null
           team_size?: number | null
@@ -156,7 +156,7 @@ export type Database = {
           project_sector?: string | null
           project_stage?: string | null
           seeking_non_technical_skills?: string[] | null
-          seeking_technical?: boolean | null
+          seeking_technical?: string | null
           seeking_technical_skills?: string[] | null
           support_areas?: string[] | null
           team_size?: number | null

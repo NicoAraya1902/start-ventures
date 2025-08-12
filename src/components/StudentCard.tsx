@@ -58,10 +58,10 @@ export function StudentCard({ student }: { student: Student }) {
                 {student.isTechnical ? "Técnico" : "No Técnico"}
               </Badge>
             )}
-            {student.seekingTechnical !== undefined && (
+            {student.seekingTechnical && student.seekingTechnical !== "none" && (
               <Badge variant="outline" className="flex items-center gap-1">
                 <Search className="h-3 w-3" />
-                Busca: {student.seekingTechnical ? "Técnico" : "No Técnico"}
+                Busca: {student.seekingTechnical === "technical" ? "Técnico" : "No Técnico"}
               </Badge>
             )}
           </div>
@@ -106,18 +106,28 @@ export function StudentCard({ student }: { student: Student }) {
           </div>
 
           {/* What they're seeking */}
-          {((student.seekingTechnical ? student.seekingTechnicalSkills : student.seekingNonTechnicalSkills)?.length || 0) > 0 && (
+          {student.seekingTechnical && student.seekingTechnical !== "none" && (
             <div>
               <p className="text-xs font-medium text-muted-foreground mb-1">
                 Busca en su equipo:
               </p>
               <div className="flex flex-wrap gap-1">
-                {(student.seekingTechnical ? student.seekingTechnicalSkills : student.seekingNonTechnicalSkills)?.map((skill, index) => (
-                  <Badge key={index} variant="secondary" className="text-xs">
-                    <Search className="w-3 h-3 mr-1" />
-                    {skill}
-                  </Badge>
-                ))}
+                {student.seekingTechnical === "technical" && student.seekingTechnicalSkills && (
+                  student.seekingTechnicalSkills.map((skill, index) => (
+                    <Badge key={index} variant="secondary" className="text-xs">
+                      <Search className="w-3 h-3 mr-1" />
+                      {skill}
+                    </Badge>
+                  ))
+                )}
+                {student.seekingTechnical === "non_technical" && student.seekingNonTechnicalSkills && (
+                  student.seekingNonTechnicalSkills.map((skill, index) => (
+                    <Badge key={index} variant="secondary" className="text-xs">
+                      <Search className="w-3 h-3 mr-1" />
+                      {skill}
+                    </Badge>
+                  ))
+                )}
               </div>
             </div>
           )}
