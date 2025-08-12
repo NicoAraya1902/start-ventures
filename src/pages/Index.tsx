@@ -71,8 +71,8 @@ const Index = () => {
           phone: profile.phone || undefined,
           linkedinUrl: undefined,
           university: profile.university || '',
-          location: profile.location || 'Santiago', // Default location
-          region: profile.region || 'Región Metropolitana de Santiago', // Default region
+          location: (profile as any).location || 'Santiago', // Default location
+          region: (profile as any).region || 'Región Metropolitana de Santiago', // Default region
           userType: (profile.user_type as 'universitario' | 'no_universitario') || 'universitario',
           isTechnical: profile.is_technical || undefined,
           seekingTechnical: profile.seeking_technical || undefined,

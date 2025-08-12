@@ -88,6 +88,7 @@ export type Database = {
           id: string
           interests: string[] | null
           is_technical: boolean | null
+          location: string | null
           non_technical_skills: string[] | null
           phone: string | null
           profession: string | null
@@ -95,6 +96,7 @@ export type Database = {
           project_name: string | null
           project_sector: string | null
           project_stage: string | null
+          region: string | null
           seeking_non_technical_skills: string[] | null
           seeking_technical: string | null
           seeking_technical_skills: string[] | null
@@ -121,6 +123,7 @@ export type Database = {
           id?: string
           interests?: string[] | null
           is_technical?: boolean | null
+          location?: string | null
           non_technical_skills?: string[] | null
           phone?: string | null
           profession?: string | null
@@ -128,6 +131,7 @@ export type Database = {
           project_name?: string | null
           project_sector?: string | null
           project_stage?: string | null
+          region?: string | null
           seeking_non_technical_skills?: string[] | null
           seeking_technical?: string | null
           seeking_technical_skills?: string[] | null
@@ -154,6 +158,7 @@ export type Database = {
           id?: string
           interests?: string[] | null
           is_technical?: boolean | null
+          location?: string | null
           non_technical_skills?: string[] | null
           phone?: string | null
           profession?: string | null
@@ -161,6 +166,7 @@ export type Database = {
           project_name?: string | null
           project_sector?: string | null
           project_stage?: string | null
+          region?: string | null
           seeking_non_technical_skills?: string[] | null
           seeking_technical?: string | null
           seeking_technical_skills?: string[] | null
