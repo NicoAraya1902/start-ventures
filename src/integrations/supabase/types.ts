@@ -175,7 +175,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      users_are_connected: {
+        Args: { user1_id: string; user2_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never
