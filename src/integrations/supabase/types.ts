@@ -85,15 +85,19 @@ export type Database = {
           full_name: string | null
           gender: string | null
           id: string
+          is_technical: boolean | null
+          non_technical_skills: string[] | null
           phone: string | null
           profession: string | null
           project_description: string | null
           project_name: string | null
           project_sector: string | null
           project_stage: string | null
+          seeking_technical: boolean | null
           support_areas: string[] | null
           team_size: number | null
           team_status: string | null
+          technical_skills: string[] | null
           university: string | null
           updated_at: string
           user_id: string
@@ -110,15 +114,19 @@ export type Database = {
           full_name?: string | null
           gender?: string | null
           id?: string
+          is_technical?: boolean | null
+          non_technical_skills?: string[] | null
           phone?: string | null
           profession?: string | null
           project_description?: string | null
           project_name?: string | null
           project_sector?: string | null
           project_stage?: string | null
+          seeking_technical?: boolean | null
           support_areas?: string[] | null
           team_size?: number | null
           team_status?: string | null
+          technical_skills?: string[] | null
           university?: string | null
           updated_at?: string
           user_id: string
@@ -135,15 +143,19 @@ export type Database = {
           full_name?: string | null
           gender?: string | null
           id?: string
+          is_technical?: boolean | null
+          non_technical_skills?: string[] | null
           phone?: string | null
           profession?: string | null
           project_description?: string | null
           project_name?: string | null
           project_sector?: string | null
           project_stage?: string | null
+          seeking_technical?: boolean | null
           support_areas?: string[] | null
           team_size?: number | null
           team_status?: string | null
+          technical_skills?: string[] | null
           university?: string | null
           updated_at?: string
           user_id?: string

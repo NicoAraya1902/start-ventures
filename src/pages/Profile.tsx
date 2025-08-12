@@ -10,7 +10,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { User, Save, Mail, Phone, Upload, Camera } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { User, Save, Mail, Phone, Upload, Camera, Code, Briefcase } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface Profile {
@@ -35,6 +37,10 @@ interface Profile {
   team_status: string | null;
   team_size: number | null;
   support_areas: string[] | null;
+  is_technical: boolean | null;
+  seeking_technical: boolean | null;
+  technical_skills: string[] | null;
+  non_technical_skills: string[] | null;
 }
 
 export default function Profile() {
@@ -60,17 +66,24 @@ export default function Profile() {
       profile.user_type &&
       profile.gender &&
       profile.entrepreneur_type &&
-      profile.team_status
+      profile.team_status &&
+      profile.is_technical !== null &&
+      profile.seeking_technical !== null
     );
 
+    // Check if skills are filled based on technical status
+    const skillsComplete = profile.is_technical 
+      ? Boolean(profile.technical_skills && profile.technical_skills.length > 0)
+      : Boolean(profile.non_technical_skills && profile.non_technical_skills.length > 0);
+
     if (profile.user_type === 'universitario') {
-      return baseFields && Boolean(
+      return baseFields && skillsComplete && Boolean(
         profile.university &&
         profile.career &&
         profile.year
       );
     } else if (profile.user_type === 'no_universitario') {
-      return baseFields && Boolean(
+      return baseFields && skillsComplete && Boolean(
         profile.profession &&
         profile.experience_years
       );
@@ -208,6 +221,10 @@ export default function Profile() {
           team_status: profile.team_status,
           team_size: profile.team_size,
           support_areas: profile.support_areas,
+          is_technical: profile.is_technical,
+          seeking_technical: profile.seeking_technical,
+          technical_skills: profile.technical_skills,
+          non_technical_skills: profile.non_technical_skills,
         })
         .eq("user_id", user.id);
 
@@ -574,6 +591,152 @@ export default function Profile() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Technical Skills Section */}
+        {(profile?.team_status === 'buscando' || profile?.entrepreneur_type === 'con_idea' || profile?.entrepreneur_type === 'en_desarrollo') && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Code className="h-5 w-5" />
+                Perfil Técnico
+              </CardTitle>
+              <CardDescription>
+                Define tu perfil técnico y qué tipo de colaborador buscas
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Is Technical */}
+              <div className="space-y-3">
+                <Label className="text-base font-medium">¿Eres técnico?</Label>
+                <p className="text-sm text-muted-foreground">
+                  Ser técnico significa tener las habilidades para construir un producto uno mismo
+                </p>
+                <RadioGroup
+                  value={profile?.is_technical === null ? "" : profile?.is_technical ? "yes" : "no"}
+                  onValueChange={(value) => updateProfile("is_technical", value === "yes")}
+                  className="flex gap-6"
+                >
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="yes" id="technical-yes" />
+                    <Label htmlFor="technical-yes">Sí, soy técnico</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="no" id="technical-no" />
+                    <Label htmlFor="technical-no">No, no soy técnico</Label>
+                  </div>
+                </RadioGroup>
+              </div>
+
+              {/* Seeking Technical */}
+              <div className="space-y-3">
+                <Label className="text-base font-medium">¿Buscas un perfil técnico en tu equipo?</Label>
+                <RadioGroup
+                  value={profile?.seeking_technical === null ? "" : profile?.seeking_technical ? "yes" : "no"}
+                  onValueChange={(value) => updateProfile("seeking_technical", value === "yes")}
+                  className="flex gap-6"
+                >
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="yes" id="seeking-yes" />
+                    <Label htmlFor="seeking-yes">Sí, busco perfil técnico</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="no" id="seeking-no" />
+                    <Label htmlFor="seeking-no">No, busco perfil no técnico</Label>
+                  </div>
+                </RadioGroup>
+              </div>
+
+              {/* Skills Selection */}
+              {profile?.is_technical !== null && (
+                <div className="space-y-3">
+                  <Label className="text-base font-medium">
+                    {profile.is_technical ? "Mis habilidades técnicas" : "Mis habilidades no técnicas"}
+                  </Label>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                    {profile.is_technical ? (
+                      // Technical Skills
+                      [
+                        "Desarrollo web y móvil (MVP rápido)",
+                        "Manejo de bases de datos y backend ágil",
+                        "Integraciones con APIs y automatización (n8n, Zapier, Make)",
+                        "Análisis de datos y métricas clave (KPI, cohortes, CAC, LTV)",
+                        "UX/UI design centrado en el usuario",
+                        "Marketing digital (SEO, SEM, social ads)",
+                        "Email marketing y automatizaciones de ventas",
+                        "E-commerce y pasarelas de pago",
+                        "Growth hacking (experimentos de adquisición y retención)",
+                        "Gestión de herramientas SaaS para productividad y colaboración",
+                        "Seguridad básica y compliance (privacidad, pagos)",
+                        "Prototipado rápido (Figma, Canva, Webflow, Bubble)",
+                        "Creación de contenido audiovisual (videos, reels, podcast)",
+                        "Herramientas de financiamiento colectivo (crowdfunding)",
+                        "Gestión de servidores y cloud en bajo costo (AWS, GCP, DigitalOcean)"
+                      ].map((skill) => (
+                        <div key={skill} className="flex items-center space-x-2">
+                          <Checkbox
+                            id={skill}
+                            checked={profile.technical_skills?.includes(skill) || false}
+                            onCheckedChange={(checked) => {
+                              const currentSkills = profile.technical_skills || [];
+                              if (checked) {
+                                updateProfile("technical_skills", [...currentSkills, skill]);
+                              } else {
+                                updateProfile("technical_skills", currentSkills.filter(s => s !== skill));
+                              }
+                            }}
+                          />
+                          <Label htmlFor={skill} className="text-sm leading-tight">
+                            {skill}
+                          </Label>
+                        </div>
+                      ))
+                    ) : (
+                      // Non-Technical Skills
+                      [
+                        "Validación de ideas de negocio (Lean Startup)",
+                        "Diseño y presentación de pitch para inversionistas",
+                        "Networking y construcción de alianzas estratégicas",
+                        "Negociación con clientes, partners e inversionistas",
+                        "Gestión de equipos pequeños y multidisciplinarios",
+                        "Inteligencia emocional para manejar incertidumbre",
+                        "Adaptabilidad extrema y pivotaje rápido",
+                        "Storytelling para ventas y marketing",
+                        "Orientación obsesiva al cliente y su feedback",
+                        "Gestión del tiempo y priorización radical",
+                        "Búsqueda y manejo de capital (bootstrapping, VC, grants)",
+                        "Liderazgo inspirador en etapas de alto riesgo",
+                        "Creación y defensa de propuesta de valor única",
+                        "Capacidad de vender antes de construir (preventa)",
+                        "Toma de decisiones rápidas con información incompleta"
+                      ].map((skill) => (
+                        <div key={skill} className="flex items-center space-x-2">
+                          <Checkbox
+                            id={skill}
+                            checked={profile.non_technical_skills?.includes(skill) || false}
+                            onCheckedChange={(checked) => {
+                              const currentSkills = profile.non_technical_skills || [];
+                              if (checked) {
+                                updateProfile("non_technical_skills", [...currentSkills, skill]);
+                              } else {
+                                updateProfile("non_technical_skills", currentSkills.filter(s => s !== skill));
+                              }
+                            }}
+                          />
+                          <Label htmlFor={skill} className="text-sm leading-tight">
+                            {skill}
+                          </Label>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Selecciona las habilidades que mejor describen tu perfil
+                  </p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
 
         {/* Save Button */}
         <div className="flex justify-end">

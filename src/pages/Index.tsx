@@ -62,7 +62,11 @@ const Index = () => {
           university: profile.university || '',
           location: 'Santiago',
           region: 'Metropolitana',
-          userType: (profile.user_type as 'universitario' | 'no_universitario') || 'universitario'
+          userType: (profile.user_type as 'universitario' | 'no_universitario') || 'universitario',
+          isTechnical: profile.is_technical || undefined,
+          seekingTechnical: profile.seeking_technical || undefined,
+          technicalSkills: profile.technical_skills || undefined,
+          nonTechnicalSkills: profile.non_technical_skills || undefined
         })) || [];
 
         setStudents(transformedStudents);

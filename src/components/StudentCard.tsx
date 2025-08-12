@@ -1,7 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, Code, Briefcase, Search } from "lucide-react";
 import { Student } from "@/data/students-data";
 import { ContactRequestDialog } from "@/components/messaging/ContactRequestDialog";
 import { useAuth } from "@/contexts/AuthContext";
@@ -52,6 +52,18 @@ export function StudentCard({ student }: { student: Student }) {
             <Badge variant="outline">
               {student.teamStatus}
             </Badge>
+            {student.isTechnical !== undefined && (
+              <Badge variant={student.isTechnical ? "default" : "secondary"} className="flex items-center gap-1">
+                {student.isTechnical ? <Code className="h-3 w-3" /> : <Briefcase className="h-3 w-3" />}
+                {student.isTechnical ? "Técnico" : "No Técnico"}
+              </Badge>
+            )}
+            {student.seekingTechnical !== undefined && (
+              <Badge variant="outline" className="flex items-center gap-1">
+                <Search className="h-3 w-3" />
+                Busca: {student.seekingTechnical ? "Técnico" : "No Técnico"}
+              </Badge>
+            )}
           </div>
           
           {student.projectName && (
@@ -76,16 +88,18 @@ export function StudentCard({ student }: { student: Student }) {
           )}
 
           <div>
-            <p className="text-xs font-medium text-muted-foreground mb-1">Busca apoyo en:</p>
+            <p className="text-xs font-medium text-muted-foreground mb-1">
+              {student.isTechnical ? "Habilidades técnicas:" : "Habilidades no técnicas:"}
+            </p>
             <div className="flex flex-wrap gap-1">
-              {student.supportAreas.slice(0, 3).map((area, index) => (
+              {(student.isTechnical ? student.technicalSkills : student.nonTechnicalSkills)?.slice(0, 3).map((skill, index) => (
                 <Badge key={index} variant="outline" className="text-xs">
-                  {area}
+                  {skill}
                 </Badge>
               ))}
-              {student.supportAreas.length > 3 && (
+              {((student.isTechnical ? student.technicalSkills : student.nonTechnicalSkills)?.length || 0) > 3 && (
                 <Badge variant="outline" className="text-xs">
-                  +{student.supportAreas.length - 3} más
+                  +{((student.isTechnical ? student.technicalSkills : student.nonTechnicalSkills)?.length || 0) - 3} más
                 </Badge>
               )}
             </div>

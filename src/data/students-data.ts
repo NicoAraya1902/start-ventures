@@ -22,6 +22,10 @@ export interface Student {
   location: string;
   region: string;
   userType?: 'universitario' | 'no_universitario';
+  isTechnical?: boolean;
+  seekingTechnical?: boolean;
+  technicalSkills?: string[];
+  nonTechnicalSkills?: string[];
 }
 
 export const students: Student[] = [
