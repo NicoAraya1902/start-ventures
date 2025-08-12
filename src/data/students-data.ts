@@ -26,6 +26,8 @@ export interface Student {
   seekingTechnical?: boolean;
   technicalSkills?: string[];
   nonTechnicalSkills?: string[];
+  seekingTechnicalSkills?: string[];
+  seekingNonTechnicalSkills?: string[];
 }
 
 export const students: Student[] = [

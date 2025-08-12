@@ -104,6 +104,23 @@ export function StudentCard({ student }: { student: Student }) {
               )}
             </div>
           </div>
+
+          {/* What they're seeking */}
+          {((student.seekingTechnical ? student.seekingTechnicalSkills : student.seekingNonTechnicalSkills)?.length || 0) > 0 && (
+            <div>
+              <p className="text-xs font-medium text-muted-foreground mb-1">
+                Busca en su equipo:
+              </p>
+              <div className="flex flex-wrap gap-1">
+                {(student.seekingTechnical ? student.seekingTechnicalSkills : student.seekingNonTechnicalSkills)?.map((skill, index) => (
+                  <Badge key={index} variant="secondary" className="text-xs">
+                    <Search className="w-3 h-3 mr-1" />
+                    {skill}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="flex gap-2 pt-2">

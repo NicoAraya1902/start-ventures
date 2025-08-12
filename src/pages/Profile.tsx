@@ -41,6 +41,8 @@ interface Profile {
   seeking_technical: boolean | null;
   technical_skills: string[] | null;
   non_technical_skills: string[] | null;
+  seeking_technical_skills: string[] | null;
+  seeking_non_technical_skills: string[] | null;
 }
 
 export default function Profile() {
@@ -76,14 +78,21 @@ export default function Profile() {
       ? Boolean(profile.technical_skills && profile.technical_skills.length > 0)
       : Boolean(profile.non_technical_skills && profile.non_technical_skills.length > 0);
 
+    // Check if seeking skills are filled when seeking_technical is defined
+    const seekingSkillsComplete = profile.seeking_technical !== null 
+      ? profile.seeking_technical
+        ? Boolean(profile.seeking_technical_skills && profile.seeking_technical_skills.length > 0)
+        : Boolean(profile.seeking_non_technical_skills && profile.seeking_non_technical_skills.length > 0)
+      : true;
+
     if (profile.user_type === 'universitario') {
-      return baseFields && skillsComplete && Boolean(
+      return baseFields && skillsComplete && seekingSkillsComplete && Boolean(
         profile.university &&
         profile.career &&
         profile.year
       );
     } else if (profile.user_type === 'no_universitario') {
-      return baseFields && skillsComplete && Boolean(
+      return baseFields && skillsComplete && seekingSkillsComplete && Boolean(
         profile.profession &&
         profile.experience_years
       );
@@ -225,6 +234,8 @@ export default function Profile() {
           seeking_technical: profile.seeking_technical,
           technical_skills: profile.technical_skills,
           non_technical_skills: profile.non_technical_skills,
+          seeking_technical_skills: profile.seeking_technical_skills,
+          seeking_non_technical_skills: profile.seeking_non_technical_skills,
         })
         .eq("user_id", user.id);
 
@@ -645,6 +656,110 @@ export default function Profile() {
                   </div>
                 </RadioGroup>
               </div>
+
+              {/* Seeking Skills */}
+              {profile?.seeking_technical !== null && (
+                <div className="space-y-3">
+                  <Label className="text-base font-medium">
+                    Habilidades que busco en mi equipo (máximo 3)
+                  </Label>
+                  <p className="text-sm text-muted-foreground">
+                    Selecciona 2-3 habilidades que más necesitas en tu equipo
+                  </p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                    {profile.seeking_technical ? (
+                      // Technical Skills they're seeking
+                      [
+                        "Desarrollo web y móvil (MVP rápido)",
+                        "Manejo de bases de datos y backend ágil",
+                        "Integraciones con APIs y automatización (n8n, Zapier, Make)",
+                        "Análisis de datos y métricas clave (KPI, cohortes, CAC, LTV)",
+                        "UX/UI design centrado en el usuario",
+                        "Marketing digital (SEO, SEM, social ads)",
+                        "Email marketing y automatizaciones de ventas",
+                        "E-commerce y pasarelas de pago",
+                        "Growth hacking (experimentos de adquisición y retención)",
+                        "Gestión de herramientas SaaS para productividad y colaboración",
+                        "Seguridad básica y compliance (privacidad, pagos)",
+                        "Prototipado rápido (Figma, Canva, Webflow, Bubble)",
+                        "Creación de contenido audiovisual (videos, reels, podcast)",
+                        "Herramientas de financiamiento colectivo (crowdfunding)",
+                        "Gestión de servidores y cloud en bajo costo (AWS, GCP, DigitalOcean)"
+                      ].map((skill) => {
+                        const currentSeekingSkills = profile.seeking_technical_skills || [];
+                        const isSelected = currentSeekingSkills.includes(skill);
+                        const canSelect = currentSeekingSkills.length < 3 || isSelected;
+                        
+                        return (
+                          <div key={skill} className="flex items-center space-x-2">
+                            <Checkbox
+                              id={`seeking-${skill}`}
+                              checked={isSelected}
+                              disabled={!canSelect}
+                              onCheckedChange={(checked) => {
+                                if (checked) {
+                                  updateProfile("seeking_technical_skills", [...currentSeekingSkills, skill]);
+                                } else {
+                                  updateProfile("seeking_technical_skills", currentSeekingSkills.filter(s => s !== skill));
+                                }
+                              }}
+                            />
+                            <Label htmlFor={`seeking-${skill}`} className="text-sm leading-tight">
+                              {skill}
+                            </Label>
+                          </div>
+                        );
+                      })
+                    ) : (
+                      // Non-Technical Skills they're seeking
+                      [
+                        "Validación de ideas de negocio (Lean Startup)",
+                        "Diseño y presentación de pitch para inversionistas",
+                        "Networking y construcción de alianzas estratégicas",
+                        "Negociación con clientes, partners e inversionistas",
+                        "Gestión de equipos pequeños y multidisciplinarios",
+                        "Inteligencia emocional para manejar incertidumbre",
+                        "Adaptabilidad extrema y pivotaje rápido",
+                        "Storytelling para ventas y marketing",
+                        "Orientación obsesiva al cliente y su feedback",
+                        "Gestión del tiempo y priorización radical",
+                        "Búsqueda y manejo de capital (bootstrapping, VC, grants)",
+                        "Liderazgo inspirador en etapas de alto riesgo",
+                        "Creación y defensa de propuesta de valor única",
+                        "Capacidad de vender antes de construir (preventa)",
+                        "Toma de decisiones rápidas con información incompleta"
+                      ].map((skill) => {
+                        const currentSeekingSkills = profile.seeking_non_technical_skills || [];
+                        const isSelected = currentSeekingSkills.includes(skill);
+                        const canSelect = currentSeekingSkills.length < 3 || isSelected;
+                        
+                        return (
+                          <div key={skill} className="flex items-center space-x-2">
+                            <Checkbox
+                              id={`seeking-${skill}`}
+                              checked={isSelected}
+                              disabled={!canSelect}
+                              onCheckedChange={(checked) => {
+                                if (checked) {
+                                  updateProfile("seeking_non_technical_skills", [...currentSeekingSkills, skill]);
+                                } else {
+                                  updateProfile("seeking_non_technical_skills", currentSeekingSkills.filter(s => s !== skill));
+                                }
+                              }}
+                            />
+                            <Label htmlFor={`seeking-${skill}`} className="text-sm leading-tight">
+                              {skill}
+                            </Label>
+                          </div>
+                        );
+                      })
+                    )}
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Máximo 3 habilidades. Se deshabilitarán las opciones una vez alcanzado el límite.
+                  </p>
+                </div>
+              )}
 
               {/* Skills Selection */}
               {profile?.is_technical !== null && (
