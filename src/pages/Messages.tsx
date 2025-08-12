@@ -9,6 +9,8 @@ import { useToast } from "@/hooks/use-toast";
 import { Mail, MailOpen, Clock, User, UserPlus, Check, X } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
+import { ContactsList } from "@/components/messaging/ContactsList";
+import { ChatInterface } from "@/components/messaging/ChatInterface";
 
 interface ContactRequest {
   id: string;
@@ -48,6 +50,7 @@ export default function Messages() {
   const [contactRequests, setContactRequests] = useState<ContactRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedMessage, setSelectedMessage] = useState<Message | null>(null);
+  const [activeChat, setActiveChat] = useState<{ contactId: string; contactName: string } | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -224,8 +227,9 @@ export default function Messages() {
 
   return (
     <div className="container mx-auto py-8">
-      <Tabs defaultValue="messages" className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
+      <Tabs defaultValue="contacts" className="w-full">
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="contacts">Contactos</TabsTrigger>
           <TabsTrigger value="messages">Mensajes</TabsTrigger>
           <TabsTrigger value="requests" className="relative">
             Solicitudes
@@ -236,6 +240,22 @@ export default function Messages() {
             )}
           </TabsTrigger>
         </TabsList>
+
+        <TabsContent value="contacts" className="mt-6">
+          {activeChat ? (
+            <ChatInterface
+              contactId={activeChat.contactId}
+              contactName={activeChat.contactName}
+              onClose={() => setActiveChat(null)}
+            />
+          ) : (
+            <ContactsList
+              onStartChat={(contactId, contactName) => 
+                setActiveChat({ contactId, contactName })
+              }
+            />
+          )}
+        </TabsContent>
 
         <TabsContent value="messages" className="mt-6">
           <div className="grid gap-6 md:grid-cols-3">
