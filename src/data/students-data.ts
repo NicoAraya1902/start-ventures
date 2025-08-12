@@ -11,7 +11,7 @@ export interface Student {
   projectDescription?: string;
   projectStage?: string;
   projectSector?: string;
-  teamStatus: 'Solo/a' | 'En equipo';
+  teamStatus: 'Solo/a buscando equipo' | 'En equipo' | 'Equipo Completo' | 'Trabajo Individual' | string;
   teamSize?: number;
   supportAreas: string[];
   profileImageUrl: string;

@@ -52,7 +52,17 @@ const Index = () => {
           projectDescription: profile.project_description || undefined,
           projectStage: profile.project_stage || undefined,
           projectSector: profile.project_sector || undefined,
-          teamStatus: profile.team_status === 'buscando' ? 'Solo/a' : 'En equipo',
+          teamStatus: (() => {
+            if (profile.team_status === 'completo') return 'Equipo Completo';
+            if (profile.team_status === 'individual') return 'Trabajo Individual';
+            if (profile.team_status === 'buscando') {
+              if (profile.team_size && profile.team_size > 1) {
+                return `Equipo de ${profile.team_size} buscando más miembros`;
+              }
+              return 'Solo/a buscando equipo';
+            }
+            return 'En equipo';
+          })(),
           teamSize: profile.team_size || undefined,
           supportAreas: profile.support_areas || [],
           profileImageUrl: profile.avatar_url || undefined,
