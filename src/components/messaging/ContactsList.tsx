@@ -9,6 +9,7 @@ import { Users, MessageCircle, Clock } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
+import { getPartialName } from "@/lib/utils";
 
 interface Contact {
   user_id: string;
@@ -191,14 +192,14 @@ export function ContactsList({ onStartChat }: ContactsListProps) {
               >
                 <Avatar>
                   <AvatarFallback>
-                    {contact.full_name?.split(' ').map(n => n[0]).join('').toUpperCase() || 'U'}
+                    {getPartialName(contact.full_name)?.split(' ').map(n => n[0]).join('').toUpperCase() || 'U'}
                   </AvatarFallback>
                 </Avatar>
                 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-2">
                     <h4 className="font-medium text-sm truncate">
-                      {contact.full_name || contact.email}
+                      {getPartialName(contact.full_name) || contact.email}
                     </h4>
                     {contact.unread_count > 0 && (
                       <Badge variant="default" className="text-xs h-5 min-w-5 flex items-center justify-center">
@@ -228,7 +229,7 @@ export function ContactsList({ onStartChat }: ContactsListProps) {
                 <Button
                   size="sm"
                   variant="ghost"
-                  onClick={() => onStartChat(contact.user_id, contact.full_name || contact.email)}
+                  onClick={() => onStartChat(contact.user_id, getPartialName(contact.full_name) || contact.email)}
                   className="gap-1 shrink-0"
                 >
                   <MessageCircle className="h-4 w-4" />

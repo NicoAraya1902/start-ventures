@@ -7,6 +7,7 @@ import { ContactRequestDialog } from "@/components/messaging/ContactRequestDialo
 import { ProfileDetailDialog } from "@/components/ProfileDetailDialog";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { getPartialName } from "@/lib/utils";
 
 export function StudentCard({ student }: { student: Student }) {
   const { user } = useAuth();
@@ -22,7 +23,7 @@ export function StudentCard({ student }: { student: Student }) {
             className="w-16 h-16 rounded-full object-cover bg-muted"
           />
           <div className="flex-1 min-w-0">
-            <h3 className="font-semibold text-lg">{student.name}</h3>
+            <h3 className="font-semibold text-lg">{getPartialName(student.name)}</h3>
             <p className="text-sm text-muted-foreground">{student.degree}</p>
             <p className="text-sm text-muted-foreground">
               {student.userType === 'universitario' ? student.university : 'Profesional'}
@@ -140,7 +141,7 @@ export function StudentCard({ student }: { student: Student }) {
             <div onClick={(e) => e.stopPropagation()}>
               <ContactRequestDialog 
                 receiverId={student.id} 
-                receiverName={student.name}
+                receiverName={getPartialName(student.name)}
               />
             </div>
           ) : (
