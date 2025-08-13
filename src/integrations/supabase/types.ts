@@ -184,81 +184,7 @@ export type Database = {
       }
     }
     Views: {
-      profile_discovery: {
-        Row: {
-          avatar_url: string | null
-          created_at: string | null
-          entrepreneur_type: string | null
-          experience_years: number | null
-          hobbies: string[] | null
-          interests: string[] | null
-          is_technical: boolean | null
-          non_technical_skills: string[] | null
-          project_description: string | null
-          project_name: string | null
-          project_sector: string | null
-          project_stage: string | null
-          seeking_non_technical_skills: string[] | null
-          seeking_technical: string | null
-          seeking_technical_skills: string[] | null
-          support_areas: string[] | null
-          team_size: number | null
-          team_status: string | null
-          technical_skills: string[] | null
-          user_id: string | null
-          user_type: string | null
-          year: number | null
-        }
-        Insert: {
-          avatar_url?: string | null
-          created_at?: string | null
-          entrepreneur_type?: string | null
-          experience_years?: number | null
-          hobbies?: string[] | null
-          interests?: string[] | null
-          is_technical?: boolean | null
-          non_technical_skills?: string[] | null
-          project_description?: string | null
-          project_name?: string | null
-          project_sector?: string | null
-          project_stage?: string | null
-          seeking_non_technical_skills?: string[] | null
-          seeking_technical?: string | null
-          seeking_technical_skills?: string[] | null
-          support_areas?: string[] | null
-          team_size?: number | null
-          team_status?: string | null
-          technical_skills?: string[] | null
-          user_id?: string | null
-          user_type?: string | null
-          year?: number | null
-        }
-        Update: {
-          avatar_url?: string | null
-          created_at?: string | null
-          entrepreneur_type?: string | null
-          experience_years?: number | null
-          hobbies?: string[] | null
-          interests?: string[] | null
-          is_technical?: boolean | null
-          non_technical_skills?: string[] | null
-          project_description?: string | null
-          project_name?: string | null
-          project_sector?: string | null
-          project_stage?: string | null
-          seeking_non_technical_skills?: string[] | null
-          seeking_technical?: string | null
-          seeking_technical_skills?: string[] | null
-          support_areas?: string[] | null
-          team_size?: number | null
-          team_status?: string | null
-          technical_skills?: string[] | null
-          user_id?: string | null
-          user_type?: string | null
-          year?: number | null
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Functions: {
       get_connected_profile_details: {
@@ -281,6 +207,33 @@ export type Database = {
           non_technical_skills: string[]
           interests: string[]
           support_areas: string[]
+        }[]
+      }
+      get_discovery_profiles: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          user_id: string
+          user_type: string
+          entrepreneur_type: string
+          team_status: string
+          project_stage: string
+          project_sector: string
+          project_name: string
+          project_description: string
+          technical_skills: string[]
+          non_technical_skills: string[]
+          seeking_technical_skills: string[]
+          seeking_non_technical_skills: string[]
+          seeking_technical: string
+          support_areas: string[]
+          interests: string[]
+          hobbies: string[]
+          avatar_url: string
+          is_technical: boolean
+          team_size: number
+          year: number
+          experience_years: number
+          created_at: string
         }[]
       }
       users_are_connected: {

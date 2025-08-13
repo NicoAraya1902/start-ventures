@@ -26,10 +26,9 @@ const Index = () => {
   useEffect(() => {
     const fetchProfiles = async () => {
       try {
-        // Use the secure discovery view instead of direct profiles access
+        // Use the secure discovery function instead of direct table/view access
         const { data: profiles, error } = await supabase
-          .from('profile_discovery')
-          .select('*')
+          .rpc('get_discovery_profiles')
           .eq('user_type', 'universitario')
           .not('avatar_url', 'is', null)
           .not('team_status', 'is', null);
