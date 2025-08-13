@@ -34,32 +34,7 @@ export function ContactRequestDialog({ receiverId, receiverName }: ContactReques
         return;
       }
 
-      // Verify receiver exists and is universitario
-      const { data: receiverProfile, error: profileError } = await supabase
-        .from('profiles')
-        .select('user_type')
-        .eq('user_id', receiverId)
-        .single();
-
-      if (profileError || !receiverProfile) {
-        toast({
-          variant: "destructive",
-          title: "Usuario no encontrado",
-          description: "No se pudo encontrar el perfil del usuario",
-        });
-        return;
-      }
-
-      if (receiverProfile.user_type !== 'universitario') {
-        toast({
-          variant: "destructive",
-          title: "Solicitud no permitida",
-          description: "Solo puedes enviar solicitudes a estudiantes universitarios",
-        });
-        return;
-      }
-
-      // Insert contact request
+      // Insert contact request (RLS validates receiver is universitario)
       const { error } = await supabase
         .from('contact_requests')
         .insert({
