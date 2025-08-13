@@ -213,6 +213,7 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: {
           user_id: string
+          full_name: string
           user_type: string
           entrepreneur_type: string
           team_status: string
