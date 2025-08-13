@@ -12,6 +12,7 @@ import StudentCard from '@/components/StudentCard';
 import { supabase } from '@/integrations/supabase/client';
 import type { Student } from '@/data/students-data';
 import { UNIVERSITIES_CHILE, REGIONS_CHILE } from '@/data/chile-data';
+import { getPartialName } from '@/lib/utils';
 
 const Index = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -38,7 +39,7 @@ const Index = () => {
 
         const transformedStudents: Student[] = profiles?.map(profile => ({
           id: profile.user_id,  // Use user_id instead of profile.id
-          name: `Perfil ${profile.user_type}`, // Don't expose real names in discovery
+          name: getPartialName((profile as any).full_name), // Use partial name for privacy
           email: '', // Don't expose emails in discovery
           institutionalEmail: '', // Don't expose emails in discovery
           degree: profile.user_type === 'universitario' ? 'Carrera universitaria' : 'Profesional',
