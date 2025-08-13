@@ -184,9 +184,105 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      profile_discovery: {
+        Row: {
+          avatar_url: string | null
+          created_at: string | null
+          entrepreneur_type: string | null
+          experience_years: number | null
+          hobbies: string[] | null
+          interests: string[] | null
+          is_technical: boolean | null
+          non_technical_skills: string[] | null
+          project_description: string | null
+          project_name: string | null
+          project_sector: string | null
+          project_stage: string | null
+          seeking_non_technical_skills: string[] | null
+          seeking_technical: string | null
+          seeking_technical_skills: string[] | null
+          support_areas: string[] | null
+          team_size: number | null
+          team_status: string | null
+          technical_skills: string[] | null
+          user_id: string | null
+          user_type: string | null
+          year: number | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string | null
+          entrepreneur_type?: string | null
+          experience_years?: number | null
+          hobbies?: string[] | null
+          interests?: string[] | null
+          is_technical?: boolean | null
+          non_technical_skills?: string[] | null
+          project_description?: string | null
+          project_name?: string | null
+          project_sector?: string | null
+          project_stage?: string | null
+          seeking_non_technical_skills?: string[] | null
+          seeking_technical?: string | null
+          seeking_technical_skills?: string[] | null
+          support_areas?: string[] | null
+          team_size?: number | null
+          team_status?: string | null
+          technical_skills?: string[] | null
+          user_id?: string | null
+          user_type?: string | null
+          year?: number | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string | null
+          entrepreneur_type?: string | null
+          experience_years?: number | null
+          hobbies?: string[] | null
+          interests?: string[] | null
+          is_technical?: boolean | null
+          non_technical_skills?: string[] | null
+          project_description?: string | null
+          project_name?: string | null
+          project_sector?: string | null
+          project_stage?: string | null
+          seeking_non_technical_skills?: string[] | null
+          seeking_technical?: string | null
+          seeking_technical_skills?: string[] | null
+          support_areas?: string[] | null
+          team_size?: number | null
+          team_status?: string | null
+          technical_skills?: string[] | null
+          user_id?: string | null
+          user_type?: string | null
+          year?: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
+      get_connected_profile_details: {
+        Args: { target_user_id: string }
+        Returns: {
+          user_id: string
+          full_name: string
+          email: string
+          phone: string
+          location: string
+          region: string
+          university: string
+          career: string
+          profession: string
+          user_type: string
+          avatar_url: string
+          project_name: string
+          project_description: string
+          technical_skills: string[]
+          non_technical_skills: string[]
+          interests: string[]
+          support_areas: string[]
+        }[]
+      }
       users_are_connected: {
         Args: { user1_id: string; user2_id: string }
         Returns: boolean
