@@ -17,6 +17,7 @@ import Profile from "./pages/Profile";
 import Auth from "./pages/Auth";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ProfileCheck } from "@/components/ProfileCheck";
+import { FloatingFeedbackButton } from "@/components/FloatingFeedbackButton";
 
 const queryClient = new QueryClient();
 
@@ -26,6 +27,7 @@ const Layout = () => {
       <Header />
       <main className="flex-1">
         <Outlet />
+        <FloatingFeedbackButton />
       </main>
       <Footer />
     </div>

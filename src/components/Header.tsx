@@ -41,12 +41,12 @@ const Header = () => {
         <div className="flex items-center gap-3">
           <FeedbackDialog>
             <Button 
-              variant="ghost" 
+              variant="outline" 
               size="sm"
-              className="hidden md:flex items-center gap-2"
+              className="hidden md:flex items-center gap-2 bg-gradient-to-r from-primary/10 to-primary/5 border-primary/20 hover:bg-primary/10 hover:border-primary/30 text-primary font-medium transition-all duration-200"
             >
               <MessageSquare className="h-4 w-4" />
-              Feedback
+              🐛 Reportar
             </Button>
           </FeedbackDialog>
           
@@ -70,11 +70,11 @@ const Header = () => {
                 
                 <FeedbackDialog>
                   <Button 
-                    variant="ghost" 
-                    className="w-full justify-start text-lg font-medium"
+                    variant="outline" 
+                    className="w-full justify-start text-lg font-medium bg-gradient-to-r from-primary/10 to-primary/5 border-primary/20 hover:bg-primary/10 text-primary"
                   >
-                    <MessageSquare className="mr-2 h-4 w-4" />
-                    Feedback
+                    <MessageSquare className="mr-2 h-5 w-5" />
+                    🐛 Reportar Error
                   </Button>
                 </FeedbackDialog>
                 
