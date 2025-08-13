@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -12,6 +13,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { ContactRequestDialog } from "@/components/messaging/ContactRequestDialog";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 import { 
   User, 
   MapPin, 
@@ -37,6 +39,30 @@ interface ProfileDetailDialogProps {
 export function ProfileDetailDialog({ student, children }: ProfileDetailDialogProps) {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [fullProfile, setFullProfile] = useState<any>(null);
+  const [isConnected, setIsConnected] = useState(false);
+
+  // Check if users are connected and fetch full profile if they are
+  useEffect(() => {
+    const checkConnection = async () => {
+      if (!user) return;
+      
+      try {
+        // Use the secure function to get full profile details if connected
+        const { data, error } = await supabase
+          .rpc('get_connected_profile_details', { target_user_id: student.id });
+        
+        if (!error && data && data.length > 0) {
+          setFullProfile(data[0]);
+          setIsConnected(true);
+        }
+      } catch (error) {
+        console.error('Error checking connection:', error);
+      }
+    };
+
+    checkConnection();
+  }, [user, student.id]);
 
   return (
     <Dialog>
@@ -53,7 +79,9 @@ export function ProfileDetailDialog({ student, children }: ProfileDetailDialogPr
               </AvatarFallback>
             </Avatar>
             <div>
-              <h2 className="text-xl font-semibold">{student.name}</h2>
+              <h2 className="text-xl font-semibold">
+                {isConnected && fullProfile ? fullProfile.full_name : student.name}
+              </h2>
               <p className="text-sm text-muted-foreground">{student.degree}</p>
             </div>
           </DialogTitle>
@@ -80,17 +108,32 @@ export function ProfileDetailDialog({ student, children }: ProfileDetailDialogPr
                 </span>
               </div>
 
-              {student.location && (
+              {isConnected && fullProfile?.location && (
                 <div className="flex items-center gap-2">
                   <MapPin className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm">{student.location}, {student.region}</span>
+                  <span className="text-sm">{fullProfile.location}, {fullProfile.region}</span>
                 </div>
               )}
 
-              {student.phone && (
+              {isConnected && fullProfile?.email && (
+                <div className="flex items-center gap-2">
+                  <Mail className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm">{fullProfile.email}</span>
+                </div>
+              )}
+
+              {isConnected && fullProfile?.phone && (
                 <div className="flex items-center gap-2">
                   <Phone className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm">{student.phone}</span>
+                  <span className="text-sm">{fullProfile.phone}</span>
+                </div>
+              )}
+
+              {!isConnected && (
+                <div className="p-3 bg-muted rounded-lg">
+                  <p className="text-sm text-muted-foreground">
+                    💎 Contacta con este perfil para ver información de contacto completa
+                  </p>
                 </div>
               )}
 
@@ -304,10 +347,18 @@ export function ProfileDetailDialog({ student, children }: ProfileDetailDialogPr
             {/* Contact Button */}
             <div className="pt-4">
               {user ? (
-                <ContactRequestDialog 
-                  receiverId={student.id} 
-                  receiverName={student.name}
-                />
+                isConnected ? (
+                  <div className="p-3 bg-green-50 dark:bg-green-900/20 rounded-lg text-center">
+                    <p className="text-sm text-green-600 dark:text-green-400 font-medium">
+                      ✅ Ya estás conectado con este perfil
+                    </p>
+                  </div>
+                ) : (
+                  <ContactRequestDialog 
+                    receiverId={student.id} 
+                    receiverName={isConnected && fullProfile ? fullProfile.full_name : student.name}
+                  />
+                )
               ) : (
                 <Button 
                   className="w-full"

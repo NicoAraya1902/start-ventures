@@ -26,13 +26,12 @@ const Index = () => {
   useEffect(() => {
     const fetchProfiles = async () => {
       try {
+        // Use the secure discovery view instead of direct profiles access
         const { data: profiles, error } = await supabase
-          .from('profiles')
+          .from('profile_discovery')
           .select('*')
           .eq('user_type', 'universitario')
-          .not('full_name', 'is', null)
-          .not('gender', 'is', null)
-          .not('entrepreneur_type', 'is', null)
+          .not('avatar_url', 'is', null)
           .not('team_status', 'is', null);
 
         if (error) {
@@ -42,12 +41,12 @@ const Index = () => {
 
         const transformedStudents: Student[] = profiles?.map(profile => ({
           id: profile.user_id,  // Use user_id instead of profile.id
-          name: profile.full_name || '',
-          email: profile.email || '',
-          institutionalEmail: profile.email || '',
-          degree: profile.user_type === 'universitario' ? (profile.career || '') : (profile.profession || ''),
+          name: `Perfil ${profile.user_type}`, // Don't expose real names in discovery
+          email: '', // Don't expose emails in discovery
+          institutionalEmail: '', // Don't expose emails in discovery
+          degree: profile.user_type === 'universitario' ? 'Carrera universitaria' : 'Profesional',
           year: profile.user_type === 'universitario' ? (profile.year || 1) : (profile.experience_years || 0),
-          gender: profile.gender || '',
+          gender: '', // Don't expose gender in discovery
           type: profile.entrepreneur_type as 'Emprendedor/a' | 'Entusiasta',
           projectName: profile.project_name || undefined,
           projectDescription: profile.project_description || undefined,
@@ -68,9 +67,9 @@ const Index = () => {
           supportAreas: profile.support_areas || [],
           profileImageUrl: profile.avatar_url || undefined,
           hasIdea: !!profile.project_name,
-          phone: profile.phone || undefined,
+          phone: undefined, // Don't expose phone in discovery
           linkedinUrl: undefined,
-          university: profile.university || '',
+          university: '', // Don't expose university in discovery
           location: (profile as any).location || 'Santiago', // Default location
           region: (profile as any).region || 'Región Metropolitana de Santiago', // Default region
           userType: (profile.user_type as 'universitario' | 'no_universitario') || 'universitario',
