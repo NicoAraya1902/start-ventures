@@ -211,6 +211,53 @@ export default function Profile() {
   const handleSave = async () => {
     if (!user || !profile) return;
 
+    // Validar campos obligatorios
+    const missingFields = [];
+    
+    if (!profile.full_name?.trim()) missingFields.push("Nombre completo");
+    if (!profile.user_type) missingFields.push("Tipo de usuario");
+    if (!profile.gender) missingFields.push("Género");
+    if (!profile.phone?.trim()) missingFields.push("Teléfono");
+    if (!profile.entrepreneur_type) missingFields.push("Tipo de emprendedor");
+    if (!profile.team_status) missingFields.push("Estado del equipo");
+    if (profile.is_technical === null) missingFields.push("Perfil técnico");
+    if (!profile.seeking_technical) missingFields.push("Tipo de colaborador que buscas");
+
+    // Validaciones específicas por tipo de usuario
+    if (profile.user_type === 'universitario') {
+      if (!profile.university) missingFields.push("Universidad");
+      if (!profile.career?.trim()) missingFields.push("Carrera");
+      if (!profile.year) missingFields.push("Año");
+    } else if (profile.user_type === 'no_universitario') {
+      if (!profile.profession?.trim()) missingFields.push("Profesión");
+      if (!profile.experience_years) missingFields.push("Años de experiencia");
+    }
+
+    // Validar habilidades según perfil técnico
+    if (profile.is_technical && (!profile.technical_skills || profile.technical_skills.length === 0)) {
+      missingFields.push("Habilidades técnicas");
+    }
+    if (!profile.is_technical && (!profile.non_technical_skills || profile.non_technical_skills.length === 0)) {
+      missingFields.push("Habilidades no técnicas");
+    }
+
+    // Validar habilidades que busca según tipo
+    if (profile.seeking_technical === "technical" && (!profile.seeking_technical_skills || profile.seeking_technical_skills.length === 0)) {
+      missingFields.push("Habilidades técnicas que buscas");
+    }
+    if (profile.seeking_technical === "non_technical" && (!profile.seeking_non_technical_skills || profile.seeking_non_technical_skills.length === 0)) {
+      missingFields.push("Habilidades no técnicas que buscas");
+    }
+
+    if (missingFields.length > 0) {
+      toast({
+        variant: "destructive",
+        title: "Campos obligatorios faltantes",
+        description: `Completa los siguientes campos: ${missingFields.join(", ")}`,
+      });
+      return;
+    }
+
     setSaving(true);
 
     try {
@@ -363,10 +410,11 @@ export default function Profile() {
           <CardContent className="space-y-4">
             {/* User Type Selection */}
             <div className="space-y-2">
-              <Label htmlFor="user_type">Tipo de Usuario</Label>
+              <Label htmlFor="user_type">Tipo de Usuario *</Label>
               <Select
                 value={profile?.user_type || ""}
                 onValueChange={(value) => updateProfile("user_type", value as 'universitario' | 'no_universitario')}
+                required
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Selecciona tipo de usuario" />
@@ -380,11 +428,12 @@ export default function Profile() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="full_name">Nombre Completo</Label>
+                <Label htmlFor="full_name">Nombre Completo *</Label>
                 <Input
                   id="full_name"
                   value={profile?.full_name || ""}
                   onChange={(e) => updateProfile("full_name", e.target.value)}
+                  required
                 />
               </div>
               <div className="space-y-2">
@@ -400,7 +449,7 @@ export default function Profile() {
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="phone">Teléfono</Label>
+                <Label htmlFor="phone">Teléfono *</Label>
                 <div className="relative">
                   <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                   <Input
@@ -408,14 +457,16 @@ export default function Profile() {
                     value={profile?.phone || ""}
                     onChange={(e) => updateProfile("phone", e.target.value)}
                     className="pl-10"
+                    required
                   />
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="gender">Género</Label>
+                <Label htmlFor="gender">Género *</Label>
                 <Select
                   value={profile?.gender || ""}
                   onValueChange={(value) => updateProfile("gender", value)}
+                  required
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Selecciona género" />
@@ -441,10 +492,11 @@ export default function Profile() {
             <CardContent className="space-y-4">
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="university">Universidad/Institución</Label>
+                  <Label htmlFor="university">Universidad/Institución *</Label>
                   <Select
                     value={profile?.university || ""}
                     onValueChange={(value) => updateProfile("university", value)}
+                    required
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Selecciona tu universidad" />
@@ -460,18 +512,20 @@ export default function Profile() {
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="career">Carrera</Label>
+                    <Label htmlFor="career">Carrera *</Label>
                     <Input
                       id="career"
                       value={profile?.career || ""}
                       onChange={(e) => updateProfile("career", e.target.value)}
+                      required
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="year">Año</Label>
+                    <Label htmlFor="year">Año *</Label>
                     <Select
                       value={profile?.year?.toString() || ""}
                       onValueChange={(value) => updateProfile("year", parseInt(value))}
+                      required
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Selecciona año" />
@@ -499,22 +553,24 @@ export default function Profile() {
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="profession">Profesión/Ocupación</Label>
+                  <Label htmlFor="profession">Profesión/Ocupación *</Label>
                   <Input
                     id="profession"
                     value={profile?.profession || ""}
                     onChange={(e) => updateProfile("profession", e.target.value)}
                     placeholder="Ej: Desarrollador, Diseñador, Consultor, etc."
+                    required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="experience_years">Años de Experiencia</Label>
+                  <Label htmlFor="experience_years">Años de Experiencia *</Label>
                   <Input
                     id="experience_years"
                     type="number"
                     value={profile?.experience_years || ""}
                     onChange={(e) => updateProfile("experience_years", parseInt(e.target.value) || null)}
                     placeholder="Años de experiencia laboral"
+                    required
                   />
                 </div>
               </div>
@@ -529,10 +585,11 @@ export default function Profile() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="entrepreneur_type">Tipo de Emprendedor</Label>
+              <Label htmlFor="entrepreneur_type">Tipo de Emprendedor *</Label>
               <Select
                 value={profile?.entrepreneur_type || ""}
                 onValueChange={(value) => updateProfile("entrepreneur_type", value)}
+                required
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Selecciona tipo" />
@@ -593,10 +650,11 @@ export default function Profile() {
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="team_status">Estado del Equipo</Label>
+                <Label htmlFor="team_status">Estado del Equipo *</Label>
                 <Select
                   value={profile?.team_status || ""}
                   onValueChange={(value) => updateProfile("team_status", value)}
+                  required
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Selecciona estado" />
@@ -635,8 +693,8 @@ export default function Profile() {
             </CardHeader>
             <CardContent className="space-y-6">
               {/* Is Technical */}
-              <div className="space-y-3">
-                <Label className="text-base font-medium">¿Eres técnico?</Label>
+               <div className="space-y-3">
+                <Label className="text-base font-medium">¿Eres técnico? *</Label>
                 <p className="text-sm text-muted-foreground">
                   Ser técnico significa tener las habilidades para construir un producto uno mismo
                 </p>
@@ -658,7 +716,7 @@ export default function Profile() {
 
               {/* Seeking Technical */}
               <div className="space-y-3">
-                <Label className="text-base font-medium">¿Qué tipo de colaborador buscas?</Label>
+                <Label className="text-base font-medium">¿Qué tipo de colaborador buscas? *</Label>
                 <RadioGroup
                   value={profile?.seeking_technical || ""}
                   onValueChange={(value) => updateProfile("seeking_technical", value)}
