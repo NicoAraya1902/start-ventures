@@ -217,7 +217,7 @@ export default function Profile() {
     if (!profile.full_name?.trim()) missingFields.push("Nombre completo");
     if (!profile.user_type) missingFields.push("Tipo de usuario");
     if (!profile.gender) missingFields.push("Género");
-    // Phone is optional, so we don't validate it
+    // Phone is optional - no validation needed
     if (!profile.entrepreneur_type) missingFields.push("Tipo de emprendedor");
     if (!profile.team_status) missingFields.push("Estado del equipo");
     if (profile.is_technical === null) missingFields.push("Perfil técnico");
@@ -449,7 +449,7 @@ export default function Profile() {
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="phone">Teléfono</Label>
+                <Label htmlFor="phone">Teléfono (opcional)</Label>
                 <div className="relative">
                   <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                   <Input
@@ -457,6 +457,7 @@ export default function Profile() {
                     value={profile?.phone || ""}
                     onChange={(e) => updateProfile("phone", e.target.value)}
                     className="pl-10"
+                    placeholder="Ej: +56912345678"
                   />
                 </div>
               </div>
