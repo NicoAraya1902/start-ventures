@@ -29,9 +29,7 @@ const Index = () => {
         // Use the secure discovery function instead of direct table/view access
         const { data: profiles, error } = await supabase
           .rpc('get_discovery_profiles')
-          .eq('user_type', 'universitario')
-          .not('avatar_url', 'is', null)
-          .not('team_status', 'is', null);
+          .eq('user_type', 'universitario');
 
         if (error) {
           console.error('Error fetching profiles:', error);
@@ -64,7 +62,7 @@ const Index = () => {
           })(),
           teamSize: profile.team_size || undefined,
           supportAreas: profile.support_areas || [],
-          profileImageUrl: profile.avatar_url || undefined,
+          profileImageUrl: profile.avatar_url || '/placeholder.svg',
           hasIdea: !!profile.project_name,
           phone: undefined, // Don't expose phone in discovery
           linkedinUrl: undefined,

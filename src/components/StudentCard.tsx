@@ -17,9 +17,9 @@ export function StudentCard({ student }: { student: Student }) {
         <div className="p-6 space-y-4">
         <div className="flex items-start gap-4">
           <img
-            src={student.profileImageUrl}
+            src={student.profileImageUrl || '/placeholder.svg'}
             alt={student.name}
-            className="w-16 h-16 rounded-full object-cover"
+            className="w-16 h-16 rounded-full object-cover bg-muted"
           />
           <div className="flex-1 min-w-0">
             <h3 className="font-semibold text-lg">{student.name}</h3>
