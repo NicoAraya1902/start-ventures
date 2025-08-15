@@ -23,11 +23,9 @@ export interface Student {
   region: string;
   userType?: 'universitario' | 'no_universitario';
   isTechnical?: boolean;
-  seekingTechnical?: string;
-  technicalSkills?: string[];
-  nonTechnicalSkills?: string[];
-  seekingTechnicalSkills?: string[];
-  seekingNonTechnicalSkills?: string[];
+  responsibleAreas?: string[];
+  seekingAreas?: string[];
+  teamMembers?: { name: string; areas: string[] }[];
   hobbies?: string[];
   interests?: string[];
 }

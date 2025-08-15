@@ -209,76 +209,42 @@ export function ProfileDetailDialog({ student, children }: ProfileDetailDialogPr
               </>
             )}
 
-            {/* Skills */}
-            <div className="space-y-3">
-              <h3 className="font-semibold flex items-center gap-2">
-                <Code className="h-4 w-4" />
-                Habilidades
-              </h3>
-              
-              {student.technicalSkills && student.technicalSkills.length > 0 && (
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground mb-2">Técnicas:</p>
-                  <div className="flex flex-wrap gap-1">
-                    {student.technicalSkills.map((skill, index) => (
-                      <Badge key={index} variant="outline" className="text-xs">
-                        {skill}
-                      </Badge>
-                    ))}
-                  </div>
+            {/* Responsible Areas */}
+            {student.responsibleAreas && student.responsibleAreas.length > 0 && (
+              <div className="space-y-3">
+                <h3 className="font-semibold flex items-center gap-2">
+                  <Code className="h-4 w-4" />
+                  Áreas de Responsabilidad
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {student.responsibleAreas.map((area, index) => (
+                    <Badge key={index} variant="outline" className="text-xs">
+                      {area}
+                    </Badge>
+                  ))}
                 </div>
-              )}
+              </div>
+            )}
 
-              {student.nonTechnicalSkills && student.nonTechnicalSkills.length > 0 && (
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground mb-2">No técnicas:</p>
-                  <div className="flex flex-wrap gap-1">
-                    {student.nonTechnicalSkills.map((skill, index) => (
-                      <Badge key={index} variant="outline" className="text-xs">
-                        {skill}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
+            {student.responsibleAreas && student.responsibleAreas.length > 0 && (
+              <Separator />
+            )}
 
-            <Separator />
-
-            {/* What they're seeking */}
-            {student.seekingTechnical && student.seekingTechnical !== "none" && (
+            {/* Seeking Areas */}
+            {student.seekingAreas && student.seekingAreas.length > 0 && (
               <>
                 <div className="space-y-3">
                   <h3 className="font-semibold flex items-center gap-2">
                     <Search className="h-4 w-4" />
                     Busca en su equipo
                   </h3>
-                  
-                  {student.seekingTechnical === "technical" && student.seekingTechnicalSkills && (
-                    <div>
-                      <p className="text-sm font-medium text-muted-foreground mb-2">Habilidades técnicas:</p>
-                      <div className="flex flex-wrap gap-1">
-                        {student.seekingTechnicalSkills.map((skill, index) => (
-                          <Badge key={index} variant="secondary" className="text-xs">
-                            {skill}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {student.seekingTechnical === "non_technical" && student.seekingNonTechnicalSkills && (
-                    <div>
-                      <p className="text-sm font-medium text-muted-foreground mb-2">Habilidades no técnicas:</p>
-                      <div className="flex flex-wrap gap-1">
-                        {student.seekingNonTechnicalSkills.map((skill, index) => (
-                          <Badge key={index} variant="secondary" className="text-xs">
-                            {skill}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-                  )}
+                  <div className="flex flex-wrap gap-2">
+                    {student.seekingAreas.map((area, index) => (
+                      <Badge key={index} variant="secondary" className="text-xs">
+                        {area}
+                      </Badge>
+                    ))}
+                  </div>
                 </div>
                 <Separator />
               </>

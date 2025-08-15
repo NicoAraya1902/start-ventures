@@ -72,11 +72,9 @@ const Index = () => {
           region: (profile as any).region || 'Región Metropolitana de Santiago', // Default region
           userType: (profile.user_type as 'universitario' | 'no_universitario') || 'universitario',
           isTechnical: profile.is_technical || undefined,
-          seekingTechnical: profile.seeking_technical || undefined,
-          technicalSkills: profile.technical_skills || undefined,
-          nonTechnicalSkills: profile.non_technical_skills || undefined,
-          seekingTechnicalSkills: profile.seeking_technical_skills || undefined,
-          seekingNonTechnicalSkills: profile.seeking_non_technical_skills || undefined,
+          responsibleAreas: profile.responsible_areas || [],
+          seekingAreas: profile.seeking_areas || [],
+          teamMembers: profile.team_members || [],
           hobbies: profile.hobbies || undefined,
           interests: profile.interests || undefined
         })) || [];

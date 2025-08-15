@@ -12,7 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { User, Save, Mail, Phone, Upload, Camera, Code, Briefcase, Heart } from "lucide-react";
+import { User, Save, Mail, Phone, Upload, Camera, Code, Briefcase, Heart, Users, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { UNIVERSITIES_CHILE, REGIONS_CHILE } from "@/data/chile-data";
 import { sanitizeText, sanitizeEmail, sanitizePhone } from "@/lib/sanitizer";
@@ -40,14 +40,20 @@ interface Profile {
   team_size: number | null;
   support_areas: string[] | null;
   is_technical: boolean | null;
-  seeking_technical: string | null;
-  technical_skills: string[] | null;
-  non_technical_skills: string[] | null;
-  seeking_technical_skills: string[] | null;
-  seeking_non_technical_skills: string[] | null;
+  responsible_areas: string[] | null;
+  seeking_areas: string[] | null;
+  team_members: { name: string; areas: string[] }[] | null;
   hobbies: string[] | null;
   interests: string[] | null;
 }
+
+const BUSINESS_AREAS = [
+  "Producto",
+  "Ingeniería", 
+  "Diseño",
+  "Ventas y Marketing",
+  "Operaciones"
+];
 
 export default function Profile() {
   const { user } = useAuth();
@@ -60,7 +66,6 @@ export default function Profile() {
 
   useEffect(() => {
     if (!user) return;
-
     fetchProfile();
   }, [user]);
 
@@ -74,29 +79,21 @@ export default function Profile() {
       profile.entrepreneur_type &&
       profile.team_status &&
       profile.is_technical !== null &&
-      profile.seeking_technical !== null
+      profile.responsible_areas && profile.responsible_areas.length > 0
     );
 
-    // Check if skills are filled based on technical status
-    const skillsComplete = profile.is_technical 
-      ? Boolean(profile.technical_skills && profile.technical_skills.length > 0)
-      : Boolean(profile.non_technical_skills && profile.non_technical_skills.length > 0);
-
-    // Check if seeking skills are filled when seeking_technical is defined
-    const seekingSkillsComplete = profile.seeking_technical === "technical" 
-      ? Boolean(profile.seeking_technical_skills && profile.seeking_technical_skills.length > 0)
-      : profile.seeking_technical === "non_technical"
-        ? Boolean(profile.seeking_non_technical_skills && profile.seeking_non_technical_skills.length > 0)
-        : true;
+    // Check if seeking areas are filled when actively seeking team
+    const seekingComplete = profile.team_status !== 'buscando' || 
+      (profile.seeking_areas && profile.seeking_areas.length > 0);
 
     if (profile.user_type === 'universitario') {
-      return baseFields && skillsComplete && seekingSkillsComplete && Boolean(
+      return baseFields && seekingComplete && Boolean(
         profile.university &&
         profile.career &&
         profile.year
       );
     } else if (profile.user_type === 'no_universitario') {
-      return baseFields && skillsComplete && seekingSkillsComplete && Boolean(
+      return baseFields && seekingComplete && Boolean(
         profile.profession &&
         profile.experience_years
       );
@@ -120,10 +117,9 @@ export default function Profile() {
       }
 
       if (data) {
-        setProfile(data as Profile);
-        // Check if profile is complete and if we're not on profile page, redirect to home
+        setProfile(data as unknown as Profile);
+        
         if (isProfileComplete(data as Profile) && window.location.pathname === '/profile') {
-          // Only redirect if we came from login, not manual navigation
           const fromLogin = sessionStorage.getItem('fromLogin');
           if (fromLogin) {
             sessionStorage.removeItem('fromLogin');
@@ -131,14 +127,13 @@ export default function Profile() {
           }
         }
       } else {
-        // Create initial profile with default team_status
         const newProfile = {
           user_id: user.id,
           full_name: user.user_metadata?.full_name || "",
           email: user.email || "",
           avatar_url: user.user_metadata?.avatar_url || null,
-          team_status: 'buscando', // Default to actively searching
-          user_type: 'universitario' as const, // Default to university user
+          team_status: 'buscando',
+          user_type: 'universitario' as const,
         };
 
         const { data: createdProfile, error: createError } = await supabase
@@ -149,7 +144,10 @@ export default function Profile() {
 
         if (createError) throw createError;
 
-        setProfile(createdProfile as Profile);
+        setProfile({
+          ...createdProfile,
+          team_members: null
+        } as Profile);
       }
     } catch (error) {
       console.error("Error fetching profile:", error);
@@ -211,19 +209,18 @@ export default function Profile() {
   const handleSave = async () => {
     if (!user || !profile) return;
 
-    // Validar campos obligatorios
     const missingFields = [];
     
     if (!profile.full_name?.trim()) missingFields.push("Nombre completo");
     if (!profile.user_type) missingFields.push("Tipo de usuario");
     if (!profile.gender) missingFields.push("Género");
-    // Phone is optional - no validation needed
     if (!profile.entrepreneur_type) missingFields.push("Tipo de emprendedor");
     if (!profile.team_status) missingFields.push("Estado del equipo");
     if (profile.is_technical === null) missingFields.push("Perfil técnico");
-    if (!profile.seeking_technical) missingFields.push("Tipo de colaborador que buscas");
+    if (!profile.responsible_areas || profile.responsible_areas.length === 0) {
+      missingFields.push("Áreas de responsabilidad");
+    }
 
-    // Validaciones específicas por tipo de usuario
     if (profile.user_type === 'universitario') {
       if (!profile.university) missingFields.push("Universidad");
       if (!profile.career?.trim()) missingFields.push("Carrera");
@@ -233,20 +230,8 @@ export default function Profile() {
       if (!profile.experience_years) missingFields.push("Años de experiencia");
     }
 
-    // Validar habilidades según perfil técnico
-    if (profile.is_technical && (!profile.technical_skills || profile.technical_skills.length === 0)) {
-      missingFields.push("Habilidades técnicas");
-    }
-    if (!profile.is_technical && (!profile.non_technical_skills || profile.non_technical_skills.length === 0)) {
-      missingFields.push("Habilidades no técnicas");
-    }
-
-    // Validar habilidades que busca según tipo
-    if (profile.seeking_technical === "technical" && (!profile.seeking_technical_skills || profile.seeking_technical_skills.length === 0)) {
-      missingFields.push("Habilidades técnicas que buscas");
-    }
-    if (profile.seeking_technical === "non_technical" && (!profile.seeking_non_technical_skills || profile.seeking_non_technical_skills.length === 0)) {
-      missingFields.push("Habilidades no técnicas que buscas");
+    if (profile.team_status === 'buscando' && (!profile.seeking_areas || profile.seeking_areas.length === 0)) {
+      missingFields.push("Áreas que buscas en tu equipo");
     }
 
     if (missingFields.length > 0) {
@@ -261,7 +246,6 @@ export default function Profile() {
     setSaving(true);
 
     try {
-      // Sanitize all text inputs before saving
       const sanitizedProfile = {
         full_name: profile.full_name ? sanitizeText(profile.full_name, 100) : null,
         phone: profile.phone ? sanitizePhone(profile.phone) : null,
@@ -281,11 +265,9 @@ export default function Profile() {
         team_size: profile.team_size,
         support_areas: profile.support_areas,
         is_technical: profile.is_technical,
-        seeking_technical: profile.seeking_technical,
-        technical_skills: profile.technical_skills,
-        non_technical_skills: profile.non_technical_skills,
-        seeking_technical_skills: profile.seeking_technical_skills,
-        seeking_non_technical_skills: profile.seeking_non_technical_skills,
+        responsible_areas: profile.responsible_areas,
+        seeking_areas: profile.seeking_areas,
+        team_members: profile.team_members,
         hobbies: profile.hobbies,
         interests: profile.interests,
       };
@@ -316,6 +298,23 @@ export default function Profile() {
   const updateProfile = (field: keyof Profile, value: any) => {
     if (!profile) return;
     setProfile({ ...profile, [field]: value });
+  };
+
+  const addTeamMember = () => {
+    const currentMembers = profile?.team_members || [];
+    updateProfile("team_members", [...currentMembers, { name: "", areas: [] }]);
+  };
+
+  const updateTeamMember = (index: number, field: 'name' | 'areas', value: string | string[]) => {
+    const currentMembers = profile?.team_members || [];
+    const updatedMembers = [...currentMembers];
+    updatedMembers[index] = { ...updatedMembers[index], [field]: value };
+    updateProfile("team_members", updatedMembers);
+  };
+
+  const removeTeamMember = (index: number) => {
+    const currentMembers = profile?.team_members || [];
+    updateProfile("team_members", currentMembers.filter((_, i) => i !== index));
   };
 
   if (!user) {
@@ -408,7 +407,6 @@ export default function Profile() {
             <CardTitle>Información Personal</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            {/* User Type Selection */}
             <div className="space-y-2">
               <Label htmlFor="user_type">Tipo de Usuario *</Label>
               <Select
@@ -679,259 +677,183 @@ export default function Profile() {
           </CardContent>
         </Card>
 
-        {/* Technical Skills Section */}
-        {(profile?.team_status === 'buscando' || profile?.entrepreneur_type === 'con_idea' || profile?.entrepreneur_type === 'en_desarrollo') && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Code className="h-5 w-5" />
-                Perfil Técnico
-              </CardTitle>
-              <CardDescription>
-                Define tu perfil técnico y qué tipo de colaborador buscas
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {/* Is Technical */}
-               <div className="space-y-3">
-                <Label className="text-base font-medium">¿Eres técnico? *</Label>
-                <p className="text-sm text-muted-foreground">
-                  Ser técnico significa tener las habilidades para construir un producto uno mismo
-                </p>
-                <RadioGroup
-                  value={profile?.is_technical === null ? "" : profile?.is_technical ? "yes" : "no"}
-                  onValueChange={(value) => updateProfile("is_technical", value === "yes")}
-                  className="flex gap-6"
-                >
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="yes" id="technical-yes" />
-                    <Label htmlFor="technical-yes">Sí, soy técnico</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="no" id="technical-no" />
-                    <Label htmlFor="technical-no">No, no soy técnico</Label>
-                  </div>
-                </RadioGroup>
-              </div>
+        {/* Responsibility Areas and Team Section */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Briefcase className="h-5 w-5" />
+              Áreas de Responsabilidad y Equipo
+            </CardTitle>
+            <CardDescription>
+              Define qué áreas manejas y qué áreas necesitas en tu equipo
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            {/* Technical Question */}
+            <div className="space-y-3">
+              <Label className="text-base font-medium">¿Eres técnico? *</Label>
+              <p className="text-sm text-muted-foreground">
+                Programadores, científicos o ingenieros que pueden construir el producto sin ayuda externa
+              </p>
+              <RadioGroup
+                value={profile?.is_technical === null ? "" : profile?.is_technical ? "yes" : "no"}
+                onValueChange={(value) => updateProfile("is_technical", value === "yes")}
+                className="flex gap-6"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="yes" id="technical-yes" />
+                  <Label htmlFor="technical-yes">Sí, soy técnico</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="no" id="technical-no" />
+                  <Label htmlFor="technical-no">No, no soy técnico</Label>
+                </div>
+              </RadioGroup>
+            </div>
 
-              {/* Seeking Technical */}
+            {/* Responsible Areas */}
+            <div className="space-y-3">
+              <Label className="text-base font-medium">¿De qué áreas te puedes hacer responsable? *</Label>
+              <p className="text-sm text-muted-foreground">
+                Selecciona las áreas en las que puedes liderar y tomar responsabilidad
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                {BUSINESS_AREAS.map((area) => (
+                  <div key={area} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={`responsible-${area}`}
+                      checked={profile?.responsible_areas?.includes(area) || false}
+                      onCheckedChange={(checked) => {
+                        const currentAreas = profile?.responsible_areas || [];
+                        if (checked) {
+                          updateProfile("responsible_areas", [...currentAreas, area]);
+                        } else {
+                          updateProfile("responsible_areas", currentAreas.filter(a => a !== area));
+                        }
+                      }}
+                    />
+                    <Label htmlFor={`responsible-${area}`} className="text-sm">
+                      {area}
+                    </Label>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Seeking Areas - Only show if looking for team */}
+            {profile?.team_status === 'buscando' && (
               <div className="space-y-3">
-                <Label className="text-base font-medium">¿Qué tipo de colaborador buscas? *</Label>
-                <RadioGroup
-                  value={profile?.seeking_technical || ""}
-                  onValueChange={(value) => updateProfile("seeking_technical", value)}
-                  className="space-y-2"
-                >
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="technical" id="seeking-technical" />
-                    <Label htmlFor="seeking-technical">Busco un perfil técnico</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="non_technical" id="seeking-non-technical" />
-                    <Label htmlFor="seeking-non-technical">Busco un perfil no técnico</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="none" id="seeking-none" />
-                    <Label htmlFor="seeking-none">No busco colaboradores actualmente</Label>
-                  </div>
-                </RadioGroup>
+                <Label className="text-base font-medium">¿Qué áreas buscas que tu cofundador maneje? *</Label>
+                <p className="text-sm text-muted-foreground">
+                  Selecciona las áreas donde necesitas ayuda de un cofundador
+                </p>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                  {BUSINESS_AREAS.map((area) => (
+                    <div key={area} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`seeking-${area}`}
+                        checked={profile?.seeking_areas?.includes(area) || false}
+                        onCheckedChange={(checked) => {
+                          const currentAreas = profile?.seeking_areas || [];
+                          if (checked) {
+                            updateProfile("seeking_areas", [...currentAreas, area]);
+                          } else {
+                            updateProfile("seeking_areas", currentAreas.filter(a => a !== area));
+                          }
+                        }}
+                      />
+                      <Label htmlFor={`seeking-${area}`} className="text-sm">
+                        {area}
+                      </Label>
+                    </div>
+                  ))}
+                </div>
               </div>
+            )}
 
-              {/* Seeking Skills */}
-              {(profile?.seeking_technical === "technical" || profile?.seeking_technical === "non_technical") && (
-                <div className="space-y-3">
-                  <Label className="text-base font-medium">
-                    Habilidades que busco en mi equipo (máximo 3)
-                  </Label>
-                  <p className="text-sm text-muted-foreground">
-                    Selecciona 2-3 habilidades que más necesitas en tu equipo
-                  </p>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                    {profile.seeking_technical === "technical" ? (
-                      // Technical Skills they're seeking
-                      [
-                        "Desarrollo web y móvil (MVP rápido)",
-                        "Manejo de bases de datos y backend ágil",
-                        "Integraciones con APIs y automatización (n8n, Zapier, Make)",
-                        "Análisis de datos y métricas clave (KPI, cohortes, CAC, LTV)",
-                        "UX/UI design centrado en el usuario",
-                        "Marketing digital (SEO, SEM, social ads)",
-                        "Email marketing y automatizaciones de ventas",
-                        "E-commerce y pasarelas de pago",
-                        "Growth hacking (experimentos de adquisición y retención)",
-                        "Gestión de herramientas SaaS para productividad y colaboración",
-                        "Seguridad básica y compliance (privacidad, pagos)",
-                        "Prototipado rápido (Figma, Canva, Webflow, Bubble)",
-                        "Creación de contenido audiovisual (videos, reels, podcast)",
-                        "Herramientas de financiamiento colectivo (crowdfunding)",
-                        "Gestión de servidores y cloud en bajo costo (AWS, GCP, DigitalOcean)"
-                      ].map((skill) => {
-                        const currentSeekingSkills = profile.seeking_technical_skills || [];
-                        const isSelected = currentSeekingSkills.includes(skill);
-                        const canSelect = currentSeekingSkills.length < 3 || isSelected;
-                        
-                        return (
-                          <div key={skill} className="flex items-center space-x-2">
+            {/* Team Members - Only show if team is complete */}
+            {profile?.team_status === 'completo' && (
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <Label className="text-base font-medium">Miembros de tu equipo</Label>
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    size="sm"
+                    onClick={addTeamMember}
+                    className="gap-2"
+                  >
+                    <Users className="h-4 w-4" />
+                    Agregar Miembro
+                  </Button>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  Define los miembros de tu equipo y sus áreas de responsabilidad
+                </p>
+                
+                {profile?.team_members?.map((member, index) => (
+                  <div key={index} className="border rounded-lg p-4 space-y-4">
+                    <div className="flex items-center justify-between">
+                      <h4 className="font-medium">Miembro {index + 1}</h4>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => removeTeamMember(index)}
+                        className="text-destructive hover:text-destructive"
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor={`member-name-${index}`}>Nombre</Label>
+                      <Input
+                        id={`member-name-${index}`}
+                        value={member.name}
+                        onChange={(e) => updateTeamMember(index, 'name', e.target.value)}
+                        placeholder="Nombre del miembro del equipo"
+                      />
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label>Áreas de responsabilidad</Label>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+                        {BUSINESS_AREAS.map((area) => (
+                          <div key={area} className="flex items-center space-x-2">
                             <Checkbox
-                              id={`seeking-${skill}`}
-                              checked={isSelected}
-                              disabled={!canSelect}
+                              id={`member-${index}-${area}`}
+                              checked={member.areas.includes(area)}
                               onCheckedChange={(checked) => {
+                                const currentAreas = member.areas;
                                 if (checked) {
-                                  updateProfile("seeking_technical_skills", [...currentSeekingSkills, skill]);
+                                  updateTeamMember(index, 'areas', [...currentAreas, area]);
                                 } else {
-                                  updateProfile("seeking_technical_skills", currentSeekingSkills.filter(s => s !== skill));
+                                  updateTeamMember(index, 'areas', currentAreas.filter(a => a !== area));
                                 }
                               }}
                             />
-                            <Label htmlFor={`seeking-${skill}`} className="text-sm leading-tight">
-                              {skill}
+                            <Label htmlFor={`member-${index}-${area}`} className="text-sm">
+                              {area}
                             </Label>
                           </div>
-                        );
-                      })
-                    ) : (
-                      // Non-Technical Skills they're seeking
-                      [
-                        "Validación de ideas de negocio (Lean Startup)",
-                        "Diseño y presentación de pitch para inversionistas",
-                        "Networking y construcción de alianzas estratégicas",
-                        "Negociación con clientes, partners e inversionistas",
-                        "Gestión de equipos pequeños y multidisciplinarios",
-                        "Inteligencia emocional para manejar incertidumbre",
-                        "Adaptabilidad extrema y pivotaje rápido",
-                        "Storytelling para ventas y marketing",
-                        "Orientación obsesiva al cliente y su feedback",
-                        "Gestión del tiempo y priorización radical",
-                        "Búsqueda y manejo de capital (bootstrapping, VC, grants)",
-                        "Liderazgo inspirador en etapas de alto riesgo",
-                        "Creación y defensa de propuesta de valor única",
-                        "Capacidad de vender antes de construir (preventa)",
-                        "Toma de decisiones rápidas con información incompleta"
-                      ].map((skill) => {
-                        const currentSeekingSkills = profile.seeking_non_technical_skills || [];
-                        const isSelected = currentSeekingSkills.includes(skill);
-                        const canSelect = currentSeekingSkills.length < 3 || isSelected;
-                        
-                        return (
-                          <div key={skill} className="flex items-center space-x-2">
-                            <Checkbox
-                              id={`seeking-${skill}`}
-                              checked={isSelected}
-                              disabled={!canSelect}
-                              onCheckedChange={(checked) => {
-                                if (checked) {
-                                  updateProfile("seeking_non_technical_skills", [...currentSeekingSkills, skill]);
-                                } else {
-                                  updateProfile("seeking_non_technical_skills", currentSeekingSkills.filter(s => s !== skill));
-                                }
-                              }}
-                            />
-                            <Label htmlFor={`seeking-${skill}`} className="text-sm leading-tight">
-                              {skill}
-                            </Label>
-                          </div>
-                        );
-                      })
-                    )}
+                        ))}
+                      </div>
+                    </div>
                   </div>
-                  <p className="text-xs text-muted-foreground">
-                    Máximo 3 habilidades. Se deshabilitarán las opciones una vez alcanzado el límite.
-                  </p>
-                </div>
-              )}
-
-              {/* Skills Selection */}
-              {profile?.is_technical !== null && (
-                <div className="space-y-3">
-                  <Label className="text-base font-medium">
-                    {profile.is_technical ? "Mis habilidades técnicas" : "Mis habilidades no técnicas"}
-                  </Label>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                    {profile.is_technical ? (
-                      // Technical Skills
-                      [
-                        "Desarrollo web y móvil (MVP rápido)",
-                        "Manejo de bases de datos y backend ágil",
-                        "Integraciones con APIs y automatización (n8n, Zapier, Make)",
-                        "Análisis de datos y métricas clave (KPI, cohortes, CAC, LTV)",
-                        "UX/UI design centrado en el usuario",
-                        "Marketing digital (SEO, SEM, social ads)",
-                        "Email marketing y automatizaciones de ventas",
-                        "E-commerce y pasarelas de pago",
-                        "Growth hacking (experimentos de adquisición y retención)",
-                        "Gestión de herramientas SaaS para productividad y colaboración",
-                        "Seguridad básica y compliance (privacidad, pagos)",
-                        "Prototipado rápido (Figma, Canva, Webflow, Bubble)",
-                        "Creación de contenido audiovisual (videos, reels, podcast)",
-                        "Herramientas de financiamiento colectivo (crowdfunding)",
-                        "Gestión de servidores y cloud en bajo costo (AWS, GCP, DigitalOcean)"
-                      ].map((skill) => (
-                        <div key={skill} className="flex items-center space-x-2">
-                          <Checkbox
-                            id={skill}
-                            checked={profile.technical_skills?.includes(skill) || false}
-                            onCheckedChange={(checked) => {
-                              const currentSkills = profile.technical_skills || [];
-                              if (checked) {
-                                updateProfile("technical_skills", [...currentSkills, skill]);
-                              } else {
-                                updateProfile("technical_skills", currentSkills.filter(s => s !== skill));
-                              }
-                            }}
-                          />
-                          <Label htmlFor={skill} className="text-sm leading-tight">
-                            {skill}
-                          </Label>
-                        </div>
-                      ))
-                    ) : (
-                      // Non-Technical Skills
-                      [
-                        "Validación de ideas de negocio (Lean Startup)",
-                        "Diseño y presentación de pitch para inversionistas",
-                        "Networking y construcción de alianzas estratégicas",
-                        "Negociación con clientes, partners e inversionistas",
-                        "Gestión de equipos pequeños y multidisciplinarios",
-                        "Inteligencia emocional para manejar incertidumbre",
-                        "Adaptabilidad extrema y pivotaje rápido",
-                        "Storytelling para ventas y marketing",
-                        "Orientación obsesiva al cliente y su feedback",
-                        "Gestión del tiempo y priorización radical",
-                        "Búsqueda y manejo de capital (bootstrapping, VC, grants)",
-                        "Liderazgo inspirador en etapas de alto riesgo",
-                        "Creación y defensa de propuesta de valor única",
-                        "Capacidad de vender antes de construir (preventa)",
-                        "Toma de decisiones rápidas con información incompleta"
-                      ].map((skill) => (
-                        <div key={skill} className="flex items-center space-x-2">
-                          <Checkbox
-                            id={skill}
-                            checked={profile.non_technical_skills?.includes(skill) || false}
-                            onCheckedChange={(checked) => {
-                              const currentSkills = profile.non_technical_skills || [];
-                              if (checked) {
-                                updateProfile("non_technical_skills", [...currentSkills, skill]);
-                              } else {
-                                updateProfile("non_technical_skills", currentSkills.filter(s => s !== skill));
-                              }
-                            }}
-                          />
-                          <Label htmlFor={skill} className="text-sm leading-tight">
-                            {skill}
-                          </Label>
-                        </div>
-                      ))
-                    )}
+                ))}
+                
+                {(!profile?.team_members || profile.team_members.length === 0) && (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <Users className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                    <p>No has agregado miembros del equipo aún</p>
+                    <p className="text-sm">Haz clic en "Agregar Miembro" para comenzar</p>
                   </div>
-                  <p className="text-xs text-muted-foreground">
-                    Selecciona las habilidades que mejor describen tu perfil
-                  </p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        )}
+                )}
+              </div>
+            )}
+          </CardContent>
+        </Card>
 
         {/* Hobbies and Interests */}
         <Card>

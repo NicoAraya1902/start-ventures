@@ -61,12 +61,6 @@ export function StudentCard({ student }: { student: Student }) {
                 {student.isTechnical ? "Técnico" : "No Técnico"}
               </Badge>
             )}
-            {student.seekingTechnical && student.seekingTechnical !== "none" && (
-              <Badge variant="outline" className="flex items-center gap-1">
-                <Search className="h-3 w-3" />
-                Busca: {student.seekingTechnical === "technical" ? "Técnico" : "No Técnico"}
-              </Badge>
-            )}
           </div>
           
           {student.projectName && (
@@ -90,47 +84,40 @@ export function StudentCard({ student }: { student: Student }) {
             </div>
           )}
 
-          <div>
-            <p className="text-xs font-medium text-muted-foreground mb-1">
-              {student.isTechnical ? "Habilidades técnicas:" : "Habilidades no técnicas:"}
-            </p>
-            <div className="flex flex-wrap gap-1">
-              {(student.isTechnical ? student.technicalSkills : student.nonTechnicalSkills)?.slice(0, 3).map((skill, index) => (
-                <Badge key={index} variant="outline" className="text-xs">
-                  {skill}
-                </Badge>
-              ))}
-              {((student.isTechnical ? student.technicalSkills : student.nonTechnicalSkills)?.length || 0) > 3 && (
-                <Badge variant="outline" className="text-xs">
-                  +{((student.isTechnical ? student.technicalSkills : student.nonTechnicalSkills)?.length || 0) - 3} más
-                </Badge>
-              )}
+          {/* Responsible Areas */}
+          {student.responsibleAreas && student.responsibleAreas.length > 0 && (
+            <div>
+              <p className="text-xs font-medium text-muted-foreground mb-1">
+                Áreas de responsabilidad:
+              </p>
+              <div className="flex flex-wrap gap-1">
+                {student.responsibleAreas.slice(0, 3).map((area, index) => (
+                  <Badge key={index} variant="outline" className="text-xs">
+                    {area}
+                  </Badge>
+                ))}
+                {student.responsibleAreas.length > 3 && (
+                  <Badge variant="outline" className="text-xs">
+                    +{student.responsibleAreas.length - 3} más
+                  </Badge>
+                )}
+              </div>
             </div>
-          </div>
+          )}
 
-          {/* What they're seeking */}
-          {student.seekingTechnical && student.seekingTechnical !== "none" && (
+          {/* Seeking Areas */}
+          {student.seekingAreas && student.seekingAreas.length > 0 && (
             <div>
               <p className="text-xs font-medium text-muted-foreground mb-1">
                 Busca en su equipo:
               </p>
               <div className="flex flex-wrap gap-1">
-                {student.seekingTechnical === "technical" && student.seekingTechnicalSkills && (
-                  student.seekingTechnicalSkills.map((skill, index) => (
-                    <Badge key={index} variant="secondary" className="text-xs">
-                      <Search className="w-3 h-3 mr-1" />
-                      {skill}
-                    </Badge>
-                  ))
-                )}
-                {student.seekingTechnical === "non_technical" && student.seekingNonTechnicalSkills && (
-                  student.seekingNonTechnicalSkills.map((skill, index) => (
-                    <Badge key={index} variant="secondary" className="text-xs">
-                      <Search className="w-3 h-3 mr-1" />
-                      {skill}
-                    </Badge>
-                  ))
-                )}
+                {student.seekingAreas.map((area, index) => (
+                  <Badge key={index} variant="secondary" className="text-xs">
+                    <Search className="w-3 h-3 mr-1" />
+                    {area}
+                  </Badge>
+                ))}
               </div>
             </div>
           )}
@@ -138,30 +125,20 @@ export function StudentCard({ student }: { student: Student }) {
 
         <div className="flex gap-2 pt-2">
           {user ? (
-            <div onClick={(e) => e.stopPropagation()}>
-              <ContactRequestDialog 
-                receiverId={student.id} 
-                receiverName={getPartialName(student.name)}
-              />
-            </div>
+            <ContactRequestDialog receiverId={student.id} receiverName={student.name}>
+              <Button variant="outline" size="sm" className="flex-1">
+                <ExternalLink className="h-4 w-4 mr-2" />
+                Contactar
+              </Button>
+            </ContactRequestDialog>
           ) : (
-            <Button 
-              size="sm" 
-              variant="default" 
-              className="flex-1"
-              onClick={(e) => {
-                e.stopPropagation();
-                navigate('/auth');
-              }}
-            >
-              Iniciar sesión para contactar
+            <Button variant="outline" size="sm" className="flex-1" onClick={() => navigate('/auth')}>
+              Inicia sesión para contactar
             </Button>
           )}
         </div>
-      </div>
-    </Card>
+        </div>
+      </Card>
     </ProfileDetailDialog>
   );
 }
-
-export default StudentCard;

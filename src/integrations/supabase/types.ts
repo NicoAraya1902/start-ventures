@@ -97,10 +97,13 @@ export type Database = {
           project_sector: string | null
           project_stage: string | null
           region: string | null
+          responsible_areas: string[] | null
+          seeking_areas: string[] | null
           seeking_non_technical_skills: string[] | null
           seeking_technical: string | null
           seeking_technical_skills: string[] | null
           support_areas: string[] | null
+          team_members: Json | null
           team_size: number | null
           team_status: string | null
           technical_skills: string[] | null
@@ -132,10 +135,13 @@ export type Database = {
           project_sector?: string | null
           project_stage?: string | null
           region?: string | null
+          responsible_areas?: string[] | null
+          seeking_areas?: string[] | null
           seeking_non_technical_skills?: string[] | null
           seeking_technical?: string | null
           seeking_technical_skills?: string[] | null
           support_areas?: string[] | null
+          team_members?: Json | null
           team_size?: number | null
           team_status?: string | null
           technical_skills?: string[] | null
@@ -167,10 +173,13 @@ export type Database = {
           project_sector?: string | null
           project_stage?: string | null
           region?: string | null
+          responsible_areas?: string[] | null
+          seeking_areas?: string[] | null
           seeking_non_technical_skills?: string[] | null
           seeking_technical?: string | null
           seeking_technical_skills?: string[] | null
           support_areas?: string[] | null
+          team_members?: Json | null
           team_size?: number | null
           team_status?: string | null
           technical_skills?: string[] | null
@@ -196,14 +205,15 @@ export type Database = {
           full_name: string
           interests: string[]
           location: string
-          non_technical_skills: string[]
           phone: string
           profession: string
           project_description: string
           project_name: string
           region: string
+          responsible_areas: string[]
+          seeking_areas: string[]
           support_areas: string[]
-          technical_skills: string[]
+          team_members: Json
           university: string
           user_id: string
           user_type: string
@@ -220,18 +230,16 @@ export type Database = {
           hobbies: string[]
           interests: string[]
           is_technical: boolean
-          non_technical_skills: string[]
           project_description: string
           project_name: string
           project_sector: string
           project_stage: string
-          seeking_non_technical_skills: string[]
-          seeking_technical: string
-          seeking_technical_skills: string[]
+          responsible_areas: string[]
+          seeking_areas: string[]
           support_areas: string[]
+          team_members: Json
           team_size: number
           team_status: string
-          technical_skills: string[]
           user_id: string
           user_type: string
           year: number
