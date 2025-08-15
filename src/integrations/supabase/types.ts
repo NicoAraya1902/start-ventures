@@ -101,6 +101,7 @@ export type Database = {
           seeking_areas: string[] | null
           seeking_non_technical_skills: string[] | null
           seeking_technical: string | null
+          seeking_technical_preference: string | null
           seeking_technical_skills: string[] | null
           support_areas: string[] | null
           team_members: Json | null
@@ -139,6 +140,7 @@ export type Database = {
           seeking_areas?: string[] | null
           seeking_non_technical_skills?: string[] | null
           seeking_technical?: string | null
+          seeking_technical_preference?: string | null
           seeking_technical_skills?: string[] | null
           support_areas?: string[] | null
           team_members?: Json | null
@@ -177,6 +179,7 @@ export type Database = {
           seeking_areas?: string[] | null
           seeking_non_technical_skills?: string[] | null
           seeking_technical?: string | null
+          seeking_technical_preference?: string | null
           seeking_technical_skills?: string[] | null
           support_areas?: string[] | null
           team_members?: Json | null
@@ -212,6 +215,7 @@ export type Database = {
           region: string
           responsible_areas: string[]
           seeking_areas: string[]
+          seeking_technical_preference: string
           support_areas: string[]
           team_members: Json
           university: string
@@ -236,6 +240,7 @@ export type Database = {
           project_stage: string
           responsible_areas: string[]
           seeking_areas: string[]
+          seeking_technical_preference: string
           support_areas: string[]
           team_members: Json
           team_size: number

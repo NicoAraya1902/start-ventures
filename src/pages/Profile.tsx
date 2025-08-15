@@ -42,6 +42,7 @@ interface Profile {
   is_technical: boolean | null;
   responsible_areas: string[] | null;
   seeking_areas: string[] | null;
+  seeking_technical_preference: 'tecnico' | 'no_tecnico' | 'sin_preferencia' | null;
   team_members: { name: string; areas: string[] }[] | null;
   hobbies: string[] | null;
   interests: string[] | null;
@@ -82,9 +83,9 @@ export default function Profile() {
       profile.responsible_areas && profile.responsible_areas.length > 0
     );
 
-    // Check if seeking areas are filled when actively seeking team
+    // Check if seeking areas and technical preference are filled when actively seeking team
     const seekingComplete = profile.team_status !== 'buscando' || 
-      (profile.seeking_areas && profile.seeking_areas.length > 0);
+      (profile.seeking_areas && profile.seeking_areas.length > 0 && profile.seeking_technical_preference);
 
     if (profile.user_type === 'universitario') {
       return baseFields && seekingComplete && Boolean(
@@ -227,8 +228,13 @@ export default function Profile() {
       if (!profile.experience_years) missingFields.push("Años de experiencia");
     }
 
-    if (profile.team_status === 'buscando' && (!profile.seeking_areas || profile.seeking_areas.length === 0)) {
-      missingFields.push("Áreas que buscas en tu equipo");
+    if (profile.team_status === 'buscando') {
+      if (!profile.seeking_technical_preference) {
+        missingFields.push("Tipo de cofundador que buscas");
+      }
+      if (!profile.seeking_areas || profile.seeking_areas.length === 0) {
+        missingFields.push("Áreas que buscas en tu equipo");
+      }
     }
 
     if (missingFields.length > 0) {
@@ -264,6 +270,7 @@ export default function Profile() {
         is_technical: profile.is_technical,
         responsible_areas: profile.responsible_areas,
         seeking_areas: profile.seeking_areas,
+        seeking_technical_preference: profile.seeking_technical_preference,
         team_members: profile.team_members,
         hobbies: profile.hobbies,
         interests: profile.interests,
@@ -736,6 +743,34 @@ export default function Profile() {
                 ))}
               </div>
             </div>
+
+            {/* Technical Preference for Cofounder - Only show if looking for team */}
+            {profile?.team_status === 'buscando' && (
+              <div className="space-y-3">
+                <Label className="text-base font-medium">¿Qué tipo de cofundador buscas? *</Label>
+                <p className="text-sm text-muted-foreground">
+                  Define si prefieres un cofundador técnico, no técnico o no tienes preferencia
+                </p>
+                <RadioGroup
+                  value={profile?.seeking_technical_preference || ""}
+                  onValueChange={(value) => updateProfile("seeking_technical_preference", value)}
+                  className="flex flex-col gap-3"
+                >
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="tecnico" id="seeking-tecnico" />
+                    <Label htmlFor="seeking-tecnico">Busco cofundador técnico</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="no_tecnico" id="seeking-no-tecnico" />
+                    <Label htmlFor="seeking-no-tecnico">Busco cofundador no técnico</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="sin_preferencia" id="seeking-sin-preferencia" />
+                    <Label htmlFor="seeking-sin-preferencia">No tengo preferencia</Label>
+                  </div>
+                </RadioGroup>
+              </div>
+            )}
 
             {/* Seeking Areas - Only show if looking for team */}
             {profile?.team_status === 'buscando' && (
