@@ -8,7 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import StudentCard from '@/components/StudentCard';
+import { StudentCard } from "@/components/StudentCard";
 import { supabase } from '@/integrations/supabase/client';
 import type { Student } from '@/data/students-data';
 import { UNIVERSITIES_CHILE, REGIONS_CHILE } from '@/data/chile-data';
@@ -74,7 +74,7 @@ const Index = () => {
           isTechnical: profile.is_technical || undefined,
           responsibleAreas: profile.responsible_areas || [],
           seekingAreas: profile.seeking_areas || [],
-          teamMembers: profile.team_members || [],
+          teamMembers: (profile.team_members as any) || [],
           hobbies: profile.hobbies || undefined,
           interests: profile.interests || undefined
         })) || [];

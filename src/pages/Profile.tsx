@@ -117,9 +117,9 @@ export default function Profile() {
       }
 
       if (data) {
-        setProfile(data as unknown as Profile);
+        setProfile(data as any);
         
-        if (isProfileComplete(data as Profile) && window.location.pathname === '/profile') {
+        if (isProfileComplete(data as any) && window.location.pathname === '/profile') {
           const fromLogin = sessionStorage.getItem('fromLogin');
           if (fromLogin) {
             sessionStorage.removeItem('fromLogin');
@@ -144,10 +144,7 @@ export default function Profile() {
 
         if (createError) throw createError;
 
-        setProfile({
-          ...createdProfile,
-          team_members: null
-        } as Profile);
+        setProfile(createdProfile as any);
       }
     } catch (error) {
       console.error("Error fetching profile:", error);

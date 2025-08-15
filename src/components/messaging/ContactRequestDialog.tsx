@@ -10,9 +10,10 @@ import { MessageSquare } from "lucide-react";
 interface ContactRequestDialogProps {
   receiverId: string;
   receiverName: string;
+  children: React.ReactNode;
 }
 
-export function ContactRequestDialog({ receiverId, receiverName }: ContactRequestDialogProps) {
+export function ContactRequestDialog({ receiverId, receiverName, children }: ContactRequestDialogProps) {
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
@@ -88,10 +89,7 @@ export function ContactRequestDialog({ receiverId, receiverName }: ContactReques
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button size="sm" className="gap-2">
-          <MessageSquare className="h-4 w-4" />
-          Solicitar contacto
-        </Button>
+        {children}
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>

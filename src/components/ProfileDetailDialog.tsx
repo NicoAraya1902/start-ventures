@@ -26,7 +26,8 @@ import {
   Code, 
   Search,
   Heart,
-  Gamepad2
+  Gamepad2,
+  MessageSquare
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Student } from "@/data/students-data";
@@ -323,7 +324,12 @@ export function ProfileDetailDialog({ student, children }: ProfileDetailDialogPr
                   <ContactRequestDialog 
                     receiverId={student.id} 
                     receiverName={isConnected && fullProfile ? fullProfile.full_name : student.name}
-                  />
+                  >
+                    <Button size="sm" className="gap-2 w-full">
+                      <MessageSquare className="h-4 w-4" />
+                      Solicitar contacto
+                    </Button>
+                  </ContactRequestDialog>
                 )
               ) : (
                 <Button 
