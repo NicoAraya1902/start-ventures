@@ -7,7 +7,7 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.12 (cd3cf9e)"
@@ -190,51 +190,51 @@ export type Database = {
       get_connected_profile_details: {
         Args: { target_user_id: string }
         Returns: {
-          user_id: string
-          full_name: string
-          email: string
-          phone: string
-          location: string
-          region: string
-          university: string
-          career: string
-          profession: string
-          user_type: string
           avatar_url: string
-          project_name: string
-          project_description: string
-          technical_skills: string[]
-          non_technical_skills: string[]
+          career: string
+          email: string
+          full_name: string
           interests: string[]
+          location: string
+          non_technical_skills: string[]
+          phone: string
+          profession: string
+          project_description: string
+          project_name: string
+          region: string
           support_areas: string[]
+          technical_skills: string[]
+          university: string
+          user_id: string
+          user_type: string
         }[]
       }
       get_discovery_profiles: {
         Args: Record<PropertyKey, never>
         Returns: {
-          user_id: string
-          full_name: string
-          user_type: string
+          avatar_url: string
+          created_at: string
           entrepreneur_type: string
-          team_status: string
-          project_stage: string
-          project_sector: string
-          project_name: string
-          project_description: string
-          technical_skills: string[]
+          experience_years: number
+          full_name: string
+          hobbies: string[]
+          interests: string[]
+          is_technical: boolean
           non_technical_skills: string[]
-          seeking_technical_skills: string[]
+          project_description: string
+          project_name: string
+          project_sector: string
+          project_stage: string
           seeking_non_technical_skills: string[]
           seeking_technical: string
+          seeking_technical_skills: string[]
           support_areas: string[]
-          interests: string[]
-          hobbies: string[]
-          avatar_url: string
-          is_technical: boolean
           team_size: number
+          team_status: string
+          technical_skills: string[]
+          user_id: string
+          user_type: string
           year: number
-          experience_years: number
-          created_at: string
         }[]
       }
       users_are_connected: {
