@@ -13,8 +13,11 @@ import { supabase } from '@/integrations/supabase/client';
 import type { Student } from '@/data/students-data';
 import { UNIVERSITIES_CHILE, REGIONS_CHILE } from '@/data/chile-data';
 import { getPartialName } from '@/lib/utils';
+import { useAuth } from '@/contexts/AuthContext';
+import { LoginButton } from '@/components/auth/LoginButton';
 
 const Index = () => {
+  const { user } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedUniversity, setSelectedUniversity] = useState('all');
   const [selectedYear, setSelectedYear] = useState('all');
@@ -24,71 +27,75 @@ const Index = () => {
   const [students, setStudents] = useState<Student[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchProfiles = async () => {
-      try {
-        // Use the secure discovery function instead of direct table/view access
-        const { data: profiles, error } = await supabase
-          .rpc('get_discovery_profiles')
-          .eq('user_type', 'universitario');
-
-        if (error) {
-          console.error('Error fetching profiles:', error);
-          return;
-        }
-
-        const transformedStudents: Student[] = profiles?.map(profile => ({
-          id: profile.user_id,  // Use user_id instead of profile.id
-          name: getPartialName((profile as any).full_name), // Use partial name for privacy
-          email: '', // Don't expose emails in discovery
-          institutionalEmail: '', // Don't expose emails in discovery
-          degree: profile.user_type === 'universitario' ? 'Carrera universitaria' : 'Profesional',
-          year: profile.user_type === 'universitario' ? (profile.year || 1) : (profile.experience_years || 0),
-          gender: '', // Don't expose gender in discovery
-          type: profile.entrepreneur_type as 'Emprendedor/a' | 'Entusiasta',
-          projectName: profile.project_name || undefined,
-          projectDescription: profile.project_description || undefined,
-          projectStage: profile.project_stage || undefined,
-          projectSector: profile.project_sector || undefined,
-          teamStatus: (() => {
-            if (profile.team_status === 'completo') return 'Equipo Completo';
-            if (profile.team_status === 'individual') return 'Trabajo Individual';
-            if (profile.team_status === 'buscando') {
-              if (profile.team_size && profile.team_size > 1) {
-                return `Equipo de ${profile.team_size} buscando más miembros`;
-              }
-              return 'Solo/a buscando equipo';
-            }
-            return 'En equipo';
-          })(),
-          teamSize: profile.team_size || undefined,
-          supportAreas: profile.support_areas || [],
-          profileImageUrl: profile.avatar_url || '/placeholder.svg',
-          hasIdea: !!profile.project_name,
-          phone: undefined, // Don't expose phone in discovery
-          linkedinUrl: undefined,
-          university: '', // Don't expose university in discovery
-          location: (profile as any).location || 'Santiago', // Default location
-          region: (profile as any).region || 'Región Metropolitana de Santiago', // Default region
-          userType: (profile.user_type as 'universitario' | 'no_universitario') || 'universitario',
-          isTechnical: profile.is_technical || undefined,
-          responsibleAreas: profile.responsible_areas || [],
-          seekingAreas: profile.seeking_areas || [],
-          teamMembers: (profile.team_members as any) || [],
-          hobbies: profile.hobbies || undefined,
-          interests: profile.interests || undefined
-        })) || [];
-
-        setStudents(transformedStudents);
-      } catch (error) {
-        console.error('Error:', error);
-      } finally {
-        setLoading(false);
+useEffect(() => {
+  const fetchProfiles = async () => {
+    try {
+      if (!user) {
+        setStudents([]);
+        return;
       }
-    };
+      // Use the secure discovery function instead of direct table/view access
+      const { data: profiles, error } = await supabase
+        .rpc('get_discovery_profiles')
+        .eq('user_type', 'universitario');
 
-    fetchProfiles();
-  }, []);
+      if (error) {
+        console.error('Error fetching profiles:', error);
+        return;
+      }
+
+      const transformedStudents: Student[] = profiles?.map(profile => ({
+        id: profile.user_id,  // Use user_id instead of profile.id
+        name: getPartialName((profile as any).full_name), // Use partial name for privacy
+        email: '', // Don't expose emails in discovery
+        institutionalEmail: '', // Don't expose emails in discovery
+        degree: profile.user_type === 'universitario' ? 'Carrera universitaria' : 'Profesional',
+        year: profile.user_type === 'universitario' ? (profile.year || 1) : (profile.experience_years || 0),
+        gender: '', // Don't expose gender in discovery
+        type: profile.entrepreneur_type as 'Emprendedor/a' | 'Entusiasta',
+        projectName: profile.project_name || undefined,
+        projectDescription: profile.project_description || undefined,
+        projectStage: profile.project_stage || undefined,
+        projectSector: profile.project_sector || undefined,
+        teamStatus: (() => {
+          if (profile.team_status === 'completo') return 'Equipo Completo';
+          if (profile.team_status === 'individual') return 'Trabajo Individual';
+          if (profile.team_status === 'buscando') {
+            if (profile.team_size && profile.team_size > 1) {
+              return `Equipo de ${profile.team_size} buscando más miembros`;
+            }
+            return 'Solo/a buscando equipo';
+          }
+          return 'En equipo';
+        })(),
+        teamSize: profile.team_size || undefined,
+        supportAreas: profile.support_areas || [],
+        profileImageUrl: profile.avatar_url || '/placeholder.svg',
+        hasIdea: !!profile.project_name,
+        phone: undefined, // Don't expose phone in discovery
+        linkedinUrl: undefined,
+        university: '', // Don't expose university in discovery
+        location: (profile as any).location || 'Santiago', // Default location
+        region: (profile as any).region || 'Región Metropolitana de Santiago', // Default region
+        userType: (profile.user_type as 'universitario' | 'no_universitario') || 'universitario',
+        isTechnical: profile.is_technical || undefined,
+        responsibleAreas: profile.responsible_areas || [],
+        seekingAreas: profile.seeking_areas || [],
+        teamMembers: (profile.team_members as any) || [],
+        hobbies: profile.hobbies || undefined,
+        interests: profile.interests || undefined
+      })) || [];
+
+      setStudents(transformedStudents);
+    } catch (error) {
+      console.error('Error:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchProfiles();
+}, [user]);
 
   // Use predefined lists for filters
   const universities = ['all', ...UNIVERSITIES_CHILE];
@@ -198,10 +205,17 @@ const Index = () => {
           </div>
 
           {/* Students Grid */}
-          {loading ? (
+{loading ? (
             <div className="text-center py-16">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
               <p className="text-muted-foreground">Cargando perfiles...</p>
+            </div>
+          ) : !user ? (
+            <div className="text-center py-16">
+              <UsersIcon className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+              <h3 className="text-2xl font-semibold mb-2">Inicia sesión para ver perfiles</h3>
+              <p className="text-muted-foreground mb-4">Debes iniciar sesión para acceder al directorio de estudiantes.</p>
+              <div className="flex justify-center"><LoginButton /></div>
             </div>
           ) : filteredStudents.length > 0 ? (
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
