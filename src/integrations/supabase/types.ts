@@ -245,6 +245,7 @@ export type Database = {
           team_members: Json
           team_size: number
           team_status: string
+          university: string
           user_id: string
           user_type: string
           year: number

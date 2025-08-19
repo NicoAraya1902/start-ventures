@@ -49,7 +49,7 @@ useEffect(() => {
         name: getPartialName((profile as any).full_name), // Use partial name for privacy
         email: '', // Don't expose emails in discovery
         institutionalEmail: '', // Don't expose emails in discovery
-        degree: profile.user_type === 'universitario' ? ((profile as any).university || 'Universidad') : 'Profesional',
+        degree: profile.user_type === 'universitario' ? (profile.university || 'Universidad') : 'Profesional',
         year: profile.user_type === 'universitario' ? (profile.year || 1) : (profile.experience_years || 0),
         gender: '', // Don't expose gender in discovery
         type: profile.entrepreneur_type as 'Emprendedor/a' | 'Entusiasta',
@@ -74,7 +74,7 @@ useEffect(() => {
         hasIdea: !!profile.project_name,
         phone: undefined, // Don't expose phone in discovery
         linkedinUrl: undefined,
-        university: (profile as any).university || '',
+        university: profile.university || '',
         location: (profile as any).location || 'Santiago', // Default location
         region: (profile as any).region || 'Región Metropolitana de Santiago', // Default region
         userType: (profile.user_type as 'universitario' | 'no_universitario') || 'universitario',
